@@ -9,8 +9,7 @@ namespace TinyHouse.UI
     {
         private int _userId;
         private string _fullName;
-        private string _connectionString = @"Server=localhost;Database=TinyHouseDB;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;";
-
+        private string _connectionString = @"Server=DESKTOP-2U2UUHO\SQLEXPRESS;Database=TinyHouseDB;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;";
 
         public OwnerForm(int userId, string fullName)
         {

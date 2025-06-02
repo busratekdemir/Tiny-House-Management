@@ -7,8 +7,7 @@ namespace TinyHouse.UI
 {
     public partial class ManageReservationsForm : Form
     {
- private string connectionString = @"Server=localhost;Database=TinyHouseDB;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;";
-
+        private string connectionString = @"Server=DESKTOP-2U2UUHO\SQLEXPRESS;Database=TinyHouseDB;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;";
 
         public ManageReservationsForm()
         {

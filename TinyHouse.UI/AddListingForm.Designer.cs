@@ -151,6 +151,7 @@
             Controls.Add(txtTitle);
             Name = "AddListingForm";
             Text = "AddListingForm";
+            Load += AddListingForm_Load;
             ((System.ComponentModel.ISupportInitialize)nudPrice).EndInit();
             ResumeLayout(false);
             PerformLayout();
