@@ -1,27 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using TinyHouse.Data;
+using Microsoft.Data.SqlClient;
+
+
 
 
 namespace TinyHouse.UI
 {
     public partial class RegisterForm : Form
     {
+  private string connectionString = @"Server=localhost;Database=TinyHouseDB;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;";
+
+
         public RegisterForm()
         {
             InitializeComponent();
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void RegisterForm_Load(object sender, EventArgs e)
@@ -29,11 +27,7 @@ namespace TinyHouse.UI
             cmbRole.Items.Clear();
             cmbRole.Items.Add("Kiracı");
             cmbRole.Items.Add("Ev Sahibi");
-
         }
-
-
-
 
         private void btnRegister_Click(object sender, EventArgs e)
         {
@@ -51,31 +45,56 @@ namespace TinyHouse.UI
                 return;
             }
 
-            using (var context = new TinyHouseContext())
+            using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                var yeniKullanici = new User
+                try
                 {
-                    FullName = fullName,
-                    Email = email,
-                    Password = password,
-                    Role = role
-                };
+                    conn.Open();
 
-                context.Users.Add(yeniKullanici);
-                context.SaveChanges();
+                    string checkQuery = "SELECT COUNT(*) FROM Users WHERE Email = @Email";
+                    SqlCommand checkCmd = new SqlCommand(checkQuery, conn);
+                    checkCmd.Parameters.AddWithValue("@Email", email);
+
+                    int exists = (int)checkCmd.ExecuteScalar();
+                    if (exists > 0)
+                    {
+                        MessageBox.Show("Bu e-posta adresiyle zaten bir kayıt var.");
+                        return;
+                    }
+
+                    string insertQuery = @"
+                        INSERT INTO Users (FullName, Email, Password, Role)
+                        VALUES (@FullName, @Email, @Password, @Role)";
+
+                    SqlCommand cmd = new SqlCommand(insertQuery, conn);
+                    cmd.Parameters.AddWithValue("@FullName", fullName);
+                    cmd.Parameters.AddWithValue("@Email", email);
+                    cmd.Parameters.AddWithValue("@Password", password);
+                    cmd.Parameters.AddWithValue("@Role", role);
+
+                    int result = cmd.ExecuteNonQuery();
+
+                    if (result > 0)
+                    {
+                        MessageBox.Show("Kayıt başarılı!");
+                        LoginForm loginForm = new LoginForm();
+                        loginForm.Show();
+                        this.Hide();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Kayıt sırasında bir hata oluştu.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("HATA: " + ex.Message);
+                }
             }
-
-            MessageBox.Show("Kayıt başarılı!");
-
-            // Giriş ekranına geç
-            LoginForm loginForm = new LoginForm();
-            loginForm.Show();
-            this.Hide();
         }
 
         private void cmbRole_SelectedIndexChanged(object sender, EventArgs e)
         {
-
         }
     }
 }

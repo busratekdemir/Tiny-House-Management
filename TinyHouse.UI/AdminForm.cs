@@ -1,18 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 using System.Windows.Forms;
-using TinyHouse.Data;
 
 namespace TinyHouse.UI
 {
     public partial class AdminForm : Form
     {
+    private string connectionString = @"Server=localhost;Database=TinyHouseDB;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;";
+
+
+
+
         public AdminForm()
         {
             InitializeComponent();
@@ -20,19 +19,35 @@ namespace TinyHouse.UI
 
         private void AdminForm_Load(object sender, EventArgs e)
         {
-            using (var context = new TinyHouseContext())
+            using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                label6.Text = context.Users.Count().ToString();           // Kullanıcı sayısı
-                label7.Text = context.TinyHouses.Count().ToString();      // İlan sayısı
-                label8.Text = context.Reservations.Count().ToString();    // Rezervasyon sayısı
+                conn.Open();
+
+                // Kullanıcı sayısı
+                using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM Users", conn))
+                {
+                    label6.Text = cmd.ExecuteScalar().ToString();
+                }
+
+                // İlan sayısı
+                using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM TinyHouses", conn))
+                {
+                    label7.Text = cmd.ExecuteScalar().ToString();
+                }
+
+                // Rezervasyon sayısı
+                using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM Reservations", conn))
+                {
+                    label8.Text = cmd.ExecuteScalar().ToString();
+                }
             }
         }
 
         private void btnLogout_Click(object sender, EventArgs e)
         {
-            LoginForm loginForm = new LoginForm(); // Giriş ekranını tekrar aç
+            LoginForm loginForm = new LoginForm();
             loginForm.Show();
-            this.Hide(); // AdminForm'u gizle
+            this.Hide();
         }
 
         private void btnUsers_Click(object sender, EventArgs e)
@@ -47,13 +62,10 @@ namespace TinyHouse.UI
             form.Show();
         }
 
-
-        
         private void btnRes_Click(object sender, EventArgs e)
         {
             ManageReservationsForm form = new ManageReservationsForm();
             form.Show();
-
         }
     }
 }

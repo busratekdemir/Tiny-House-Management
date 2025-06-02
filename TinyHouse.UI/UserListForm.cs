@@ -1,18 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 using System.Windows.Forms;
-using TinyHouse.Data;
 
 namespace TinyHouse.UI
 {
     public partial class UserListForm : Form
     {
+       private string _connectionString = @"Server=localhost;Database=TinyHouseDB;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;";
+
+
+
         public UserListForm()
         {
             InitializeComponent();
@@ -20,17 +18,16 @@ namespace TinyHouse.UI
 
         private void UserListForm_Load(object sender, EventArgs e)
         {
-            using (var context = new TinyHouseContext())
+            using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                var users = context.Users.Select(u => new
-                {
-                    u.Id,
-                    u.FullName,
-                    u.Email,
-                    u.Role
-                }).ToList();
+                conn.Open();
+                string query = "SELECT Id, FullName, Email, Role FROM Users";
 
-                dgvUsers.DataSource = users;
+                SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
+                DataTable dt = new DataTable();
+                adapter.Fill(dt);
+
+                dgvUsers.DataSource = dt;
             }
         }
 
@@ -40,6 +37,5 @@ namespace TinyHouse.UI
             adminForm.Show();
             this.Close();
         }
-
     }
 }

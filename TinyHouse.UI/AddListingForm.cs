@@ -1,14 +1,15 @@
 ﻿using System;
+using Microsoft.Data.SqlClient;
 using System.Windows.Forms;
-using TinyHouse.Data;
 
 namespace TinyHouse.UI
 {
     public partial class AddListingForm : Form
     {
-        private int ownerId;  // Ev sahibinin Id'si
+        private int ownerId;
+        private string connectionString = @"Server=localhost;Database=TinyHouseDB;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;";
 
-        // Constructor → Ev sahibinin ID'si dışarıdan alınır
+
         public AddListingForm(int ownerId)
         {
             InitializeComponent();
@@ -33,35 +34,35 @@ namespace TinyHouse.UI
                 return;
             }
 
-            using (var context = new TinyHouseContext())
+            using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                var ilan = new TinyHouse.Data.TinyHouse
-                {
-                    Title = title,
-                    Description = description,
-                    PricePerNight = price,
-                    Location = location,
-                    OwnerId = ownerId
-                };
+                conn.Open();
 
-                context.TinyHouses.Add(ilan);
-                context.SaveChanges();
+                string query = @"INSERT INTO TinyHouses (Title, Description, PricePerNight, Location, OwnerId)
+                                 VALUES (@Title, @Description, @PricePerNight, @Location, @OwnerId)";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Title", title);
+                    cmd.Parameters.AddWithValue("@Description", description);
+                    cmd.Parameters.AddWithValue("@PricePerNight", price);
+                    cmd.Parameters.AddWithValue("@Location", location);
+                    cmd.Parameters.AddWithValue("@OwnerId", ownerId);
+
+                    cmd.ExecuteNonQuery();
+                }
             }
 
             MessageBox.Show("İlan başarıyla eklendi.");
-            this.Close();  // Formu kapat
+            this.Close();
         }
 
         private void btnBack_Click_1(object sender, EventArgs e)
         {
-            this.Close(); // Geri tuşu sadece formu kapatır
-        }
-
-        private void AddListingForm_Load(object sender, EventArgs e)
-        {
-
+            this.Close();
         }
 
         
     }
 }
+

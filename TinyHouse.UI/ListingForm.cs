@@ -1,18 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 using System.Windows.Forms;
-using TinyHouse.Data;
 
 namespace TinyHouse.UI
 {
     public partial class ListingForm : Form
     {
+     private string connectionString = @"Server=localhost;Database=TinyHouseDB;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;";
+
+
         public ListingForm()
         {
             InitializeComponent();
@@ -20,20 +17,24 @@ namespace TinyHouse.UI
 
         private void ListingForm_Load(object sender, EventArgs e)
         {
-            using (var context = new TinyHouseContext())
+            using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                var ilanlar = context.TinyHouses
-                    .Select(t => new
-                    {
+                conn.Open();
+                string query = @"
+                    SELECT 
                         t.Id,
                         t.Title,
                         t.Location,
                         t.PricePerNight,
-                        EvSahibi = t.Owner.FullName
-                    })
-                    .ToList();
+                        u.FullName AS EvSahibi
+                    FROM TinyHouses t
+                    INNER JOIN Users u ON t.OwnerId = u.Id";
 
-                dgvHouses.DataSource = ilanlar;
+                SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
+                DataTable dt = new DataTable();
+                adapter.Fill(dt);
+
+                dgvHouses.DataSource = dt;
             }
         }
 
@@ -43,6 +44,5 @@ namespace TinyHouse.UI
             adminForm.Show();
             this.Close();
         }
-
     }
 }

@@ -7,10 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using TinyHouse.Data;
 using TinyHouse.UI;
 using TinyHouse.Business;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
+
+
 
 
 namespace TinyHouse.UI
@@ -27,62 +28,82 @@ namespace TinyHouse.UI
         {
             RegisterForm registerForm = new RegisterForm();
             registerForm.Show();
-            this.Hide(); // LoginForm gözükmez
+            this.Hide();
         }
 
-        private async void btnLogin_Click(object sender, EventArgs e)
+        private void btnLogin_Click(object sender, EventArgs e)
         {
-            try
+            string email = txtEmail.Text;
+            string password = txtPassword.Text;
+
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
             {
-                string email = txtEmail.Text;
-                string password = txtPassword.Text;
-
-                if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
-                {
-                    MessageBox.Show("Lütfen tüm alanları doldurun.");
-                    return;
-                }
-
-                using (var context = new TinyHouse.Data.TinyHouseContext())
-                {
-                    var user = await context.Users
-                        .FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
-
-                    if (user != null)
-                    {
-                        MessageBox.Show("Giriş başarılı!");
-
-                        if (user.Role == "Admin")
-                        {
-                            AdminForm adminForm = new AdminForm();
-                            this.Hide();
-                            adminForm.ShowDialog();
-                            this.Close();
-                        }
-                        else if (user.Role == "Ev Sahibi")
-                        {
-                            OwnerForm ownerForm = new OwnerForm(user); // user parametresiyle gönderiyoruz!
-                            this.Hide();
-                            ownerForm.ShowDialog();
-                            this.Close();
-                        }
-                        else if (user.Role == "Kiracı")
-                        {
-                            // Kiracı formu ileride buraya eklenecek
-                            MessageBox.Show("Kiracı paneli yakında!");
-                        }
-                    }
-                    else
-                    {
-                        MessageBox.Show("Geçersiz e-posta veya şifre.");
-                    }
-                }
+                MessageBox.Show("Lütfen tüm alanları doldurun.");
+                return;
             }
-            catch (Exception ex)
+
+            string connectionString = @"Server=localhost;Database=TinyHouseDB;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;";
+
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                MessageBox.Show("HATA: " + ex.Message);
+                try
+                {
+                    connection.Open();
+
+                    string query = "SELECT * FROM Users WHERE Email = @Email AND Password = @Password";
+
+                    using (Microsoft.Data.SqlClient.SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@Email", email);
+                        command.Parameters.AddWithValue("@Password", password);
+
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                string role = reader["Role"].ToString();
+                                int userId = Convert.ToInt32(reader["Id"]);
+                                string fullName = reader["FullName"].ToString();
+
+                                MessageBox.Show("Giriş başarılı!");
+
+                                if (role == "Admin")
+                                {
+                                    AdminForm adminForm = new AdminForm();
+                                    this.Hide();
+                                    adminForm.ShowDialog();
+                                    this.Close();
+                                }
+                                else if (role == "Ev Sahibi")
+                                {
+                                    OwnerForm ownerForm = new OwnerForm(userId, fullName);
+                                    this.Hide();
+                                    ownerForm.ShowDialog();
+                                    this.Close();
+                                }
+                                else if (role == "Kiracı")
+                                {
+                                    MessageBox.Show("Kiracı paneli yakında!");
+                                }
+                            }
+                            else
+                            {
+                                MessageBox.Show("Geçersiz e-posta veya şifre.");
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("HATA: " + ex.Message);
+                }
             }
         }
 
+        private void LoginForm_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

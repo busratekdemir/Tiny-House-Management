@@ -1,81 +1,82 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 using System.Windows.Forms;
-
-using TinyHouse.Data;
 
 namespace TinyHouse.UI
 {
-    
     public partial class UpdateListingForm : Form
     {
-        private int listingId;
+        private int _ilanId;
+       private string _connectionString = @"Server=localhost;Database=TinyHouseDB;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;";
 
-        public UpdateListingForm(int listingId)
+
+        public UpdateListingForm(int ilanId)
         {
             InitializeComponent();
-            this.listingId = listingId;
+            _ilanId = ilanId;
         }
 
         private void UpdateListingForm_Load(object sender, EventArgs e)
         {
-            using (var context = new TinyHouseContext())
+            using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                var ilan = context.TinyHouses.FirstOrDefault(x => x.Id == listingId);
+                conn.Open();
+                string query = "SELECT Title, Description, PricePerNight, Location FROM TinyHouses WHERE Id = @Id";
 
-                if (ilan != null)
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Id", _ilanId);
+
+                SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
                 {
-                    txtTitle.Text = ilan.Title;
-                    txtDescription.Text = ilan.Description;
-                    nudPrice.Value = ilan.PricePerNight;
-                    txtLocation.Text = ilan.Location;
+                    txtTitle.Text = reader["Title"].ToString();
+                    txtDescription.Text = reader["Description"].ToString();
+                    nudPrice.Value = Convert.ToDecimal(reader["PricePerNight"]);
+                    txtLocation.Text = reader["Location"].ToString();
                 }
             }
         }
 
         private void btnUpdate_Click_1(object sender, EventArgs e)
         {
-            using (var context = new TinyHouseContext())
+            using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                var ilan = context.TinyHouses.FirstOrDefault(x => x.Id == listingId);
+                conn.Open();
+                string updateQuery = @"
+                    UPDATE TinyHouses
+                    SET Title = @Title,
+                        Description = @Description,
+                        PricePerNight = @Price,
+                        Location = @Location
+                    WHERE Id = @Id";
 
-                if (ilan != null)
+                SqlCommand cmd = new SqlCommand(updateQuery, conn);
+                cmd.Parameters.AddWithValue("@Title", txtTitle.Text);
+                cmd.Parameters.AddWithValue("@Description", txtDescription.Text);
+                cmd.Parameters.AddWithValue("@Price", nudPrice.Value);
+                cmd.Parameters.AddWithValue("@Location", txtLocation.Text);
+                cmd.Parameters.AddWithValue("@Id", _ilanId);
+
+                int result = cmd.ExecuteNonQuery();
+
+                if (result > 0)
                 {
-                    ilan.Title = txtTitle.Text;
-                    ilan.Description = txtDescription.Text;
-                    ilan.PricePerNight = nudPrice.Value;
-                    ilan.Location = txtLocation.Text;
-
-                    context.SaveChanges();
                     MessageBox.Show("İlan güncellendi.");
                     this.Close();
                 }
+                else
+                {
+                    MessageBox.Show("Güncelleme başarısız.");
+                }
             }
-        }
-        private User _loggedInUser;
-        private int _ilanId;
-        public UpdateListingForm(int ilanId, User loggedInUser)
-        {
-
-            InitializeComponent();
-            _ilanId = ilanId;
-            _loggedInUser = loggedInUser;
         }
 
         private void btnCancel_Click_1(object sender, EventArgs e)
         {
-            LoginForm loginForm = new LoginForm();
-            loginForm.Show();
             this.Close();
         }
-
-
     }
 }
+
 

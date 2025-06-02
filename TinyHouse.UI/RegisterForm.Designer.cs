@@ -69,7 +69,6 @@
             label3.Size = new Size(39, 20);
             label3.TabIndex = 2;
             label3.Text = "Şifre";
-            label3.Click += label3_Click;
             // 
             // txtFullName
             // 
