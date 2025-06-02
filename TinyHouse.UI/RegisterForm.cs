@@ -26,15 +26,13 @@ namespace TinyHouse.UI
 
         private void RegisterForm_Load(object sender, EventArgs e)
         {
+            cmbRole.Items.Clear();
             cmbRole.Items.Add("Kiracı");
             cmbRole.Items.Add("Ev Sahibi");
-            cmbRole.Items.Add("Admin");
-        }
-
-        private void cmbRole_SelectedIndexChanged(object sender, EventArgs e)
-        {
 
         }
+
+
 
 
         private void btnRegister_Click(object sender, EventArgs e)
@@ -75,5 +73,9 @@ namespace TinyHouse.UI
             this.Hide();
         }
 
+        private void cmbRole_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

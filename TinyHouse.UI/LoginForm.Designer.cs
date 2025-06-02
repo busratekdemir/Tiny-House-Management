@@ -58,6 +58,7 @@
             // 
             // txtEmail
             // 
+            txtEmail.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             txtEmail.Location = new Point(181, 59);
             txtEmail.Name = "txtEmail";
             txtEmail.Size = new Size(157, 27);
@@ -65,6 +66,7 @@
             // 
             // txtPassword
             // 
+            txtPassword.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             txtPassword.Location = new Point(181, 116);
             txtPassword.Name = "txtPassword";
             txtPassword.Size = new Size(157, 27);
@@ -72,6 +74,7 @@
             // 
             // btnLogin
             // 
+            btnLogin.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             btnLogin.BackColor = SystemColors.ActiveCaption;
             btnLogin.Location = new Point(244, 184);
             btnLogin.Name = "btnLogin";
@@ -83,6 +86,7 @@
             // 
             // lblRegisterLink
             // 
+            lblRegisterLink.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             lblRegisterLink.AutoSize = true;
             lblRegisterLink.BackColor = SystemColors.ActiveCaption;
             lblRegisterLink.Location = new Point(50, 259);
@@ -96,6 +100,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.Lavender;
             ClientSize = new Size(433, 319);
             Controls.Add(lblRegisterLink);
             Controls.Add(btnLogin);

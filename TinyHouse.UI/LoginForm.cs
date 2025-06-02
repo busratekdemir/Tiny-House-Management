@@ -32,31 +32,57 @@ namespace TinyHouse.UI
 
         private async void btnLogin_Click(object sender, EventArgs e)
         {
-            string email = txtEmail.Text;
-            string password = txtPassword.Text;
-
-            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+            try
             {
-                MessageBox.Show("Lütfen tüm alanları doldurun.");
-                return;
+                string email = txtEmail.Text;
+                string password = txtPassword.Text;
+
+                if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+                {
+                    MessageBox.Show("Lütfen tüm alanları doldurun.");
+                    return;
+                }
+
+                using (var context = new TinyHouse.Data.TinyHouseContext())
+                {
+                    var user = await context.Users
+                        .FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
+
+                    if (user != null)
+                    {
+                        MessageBox.Show("Giriş başarılı!");
+
+                        if (user.Role == "Admin")
+                        {
+                            AdminForm adminForm = new AdminForm();
+                            this.Hide();
+                            adminForm.ShowDialog();
+                            this.Close();
+                        }
+                        else if (user.Role == "Ev Sahibi")
+                        {
+                            OwnerForm ownerForm = new OwnerForm(user); // user parametresiyle gönderiyoruz!
+                            this.Hide();
+                            ownerForm.ShowDialog();
+                            this.Close();
+                        }
+                        else if (user.Role == "Kiracı")
+                        {
+                            // Kiracı formu ileride buraya eklenecek
+                            MessageBox.Show("Kiracı paneli yakında!");
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Geçersiz e-posta veya şifre.");
+                    }
+                }
             }
-
-            using (var context = new TinyHouseContext())
+            catch (Exception ex)
             {
-                bool isValid = await context.Users.AnyAsync(u => u.Email == email && u.Password == password);
-
-                if (isValid)
-                {
-                    MessageBox.Show("Giriş başarılı!");
-
-                    // Burada ana sayfa açılabilir ya da başka bir forma geçilebilir
-                    this.Hide();
-                }
-                else
-                {
-                    MessageBox.Show("Geçersiz e-posta veya şifre.");
-                }
+                MessageBox.Show("HATA: " + ex.Message);
             }
         }
+
     }
 }

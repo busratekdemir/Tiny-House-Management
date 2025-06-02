@@ -73,6 +73,7 @@
             // 
             // txtFullName
             // 
+            txtFullName.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             txtFullName.Location = new Point(212, 62);
             txtFullName.Name = "txtFullName";
             txtFullName.Size = new Size(206, 27);
@@ -80,6 +81,7 @@
             // 
             // txtEmail
             // 
+            txtEmail.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             txtEmail.Location = new Point(212, 128);
             txtEmail.Name = "txtEmail";
             txtEmail.Size = new Size(206, 27);
@@ -87,6 +89,7 @@
             // 
             // txtPassword
             // 
+            txtPassword.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             txtPassword.Location = new Point(212, 186);
             txtPassword.Name = "txtPassword";
             txtPassword.Size = new Size(206, 27);
@@ -104,6 +107,7 @@
             // 
             // cmbRole
             // 
+            cmbRole.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             cmbRole.FormattingEnabled = true;
             cmbRole.Location = new Point(212, 242);
             cmbRole.Name = "cmbRole";
@@ -113,6 +117,7 @@
             // 
             // btnRegister
             // 
+            btnRegister.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             btnRegister.BackColor = Color.LightCoral;
             btnRegister.Location = new Point(324, 311);
             btnRegister.Name = "btnRegister";
@@ -126,6 +131,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.MistyRose;
             ClientSize = new Size(448, 383);
             Controls.Add(btnRegister);
             Controls.Add(cmbRole);
@@ -138,6 +144,7 @@
             Controls.Add(label1);
             Name = "RegisterForm";
             Text = "RegisterForm";
+            Load += RegisterForm_Load;
             ResumeLayout(false);
             PerformLayout();
         }
