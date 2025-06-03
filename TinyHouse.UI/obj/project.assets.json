@@ -1946,5 +1946,13 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "NU1900",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Paket güvenlik açığı verileri alınırken hata oluştu: https://api.nuget.org/v3/index.json kaynağı için hizmet dizini yüklenemiyor."
+    }
+  ]
 }

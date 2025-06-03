@@ -70,7 +70,7 @@ namespace TinyHouse.UI
                         if (affected > 0)
                         {
                             MessageBox.Show("Rezervasyon silindi.");
-                            ManageReservationsForm_Load(null, null); 
+                            ManageReservationsForm_Load(null, null);
                         }
                         else
                         {
@@ -87,5 +87,7 @@ namespace TinyHouse.UI
             adminForm.Show();
             this.Close();
         }
+
+        
     }
 }

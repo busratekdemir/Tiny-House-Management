@@ -50,7 +50,8 @@ namespace TinyHouse.UI
                 {
                     connection.Open();
 
-                    string query = "SELECT * FROM Users WHERE Email = @Email AND Password = @Password";
+                    string query = "SELECT * FROM Users WHERE Email = @Email AND Password = @Password AND IsActive = 1";
+
 
                     using (Microsoft.Data.SqlClient.SqlCommand command = new SqlCommand(query, connection))
                     {
@@ -88,7 +89,8 @@ namespace TinyHouse.UI
                             }
                             else
                             {
-                                MessageBox.Show("Geçersiz e-posta veya şifre.");
+                                MessageBox.Show("Geçersiz giriş. Hesabınız pasif olabilir veya bilgiler yanlış.");
+
                             }
                         }
                     }
@@ -100,9 +102,5 @@ namespace TinyHouse.UI
             }
         }
 
-        private void LoginForm_Load(object sender, EventArgs e)
-        {
-
-        }
     }
 }

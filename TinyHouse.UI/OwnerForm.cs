@@ -18,11 +18,6 @@ namespace TinyHouse.UI
             _fullName = fullName;
         }
 
-        private void OwnerForm_Load(object sender, EventArgs e)
-        {
-            ListeleIlanlar();
-        }
-
         private void ListeleIlanlar()
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
@@ -39,6 +34,18 @@ namespace TinyHouse.UI
 
                 dgvMyHouses.DataSource = dt;
             }
+            // Sil butonu için
+            if (!dgvMyHouses.Columns.Contains("Sil"))
+            {
+                DataGridViewButtonColumn silButton = new DataGridViewButtonColumn();
+                silButton.Name = "Sil";
+                silButton.HeaderText = "İşlem";
+                silButton.Text = "Sil";
+                silButton.UseColumnTextForButtonValue = true;
+
+                dgvMyHouses.Columns.Add(silButton);
+            }
+
         }
 
         private void btnAddHouse_Click(object sender, EventArgs e)
@@ -90,6 +97,7 @@ namespace TinyHouse.UI
                     ListeleIlanlar();
                 }
             }
+
         }
 
         private void btnLogout_Click_1(object sender, EventArgs e)
@@ -99,6 +107,29 @@ namespace TinyHouse.UI
             this.Close();
         }
 
-        
+        private void button1_Click(object sender, EventArgs e)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = "SELECT dbo.fn_EvSahibiGeliri(@OwnerId)";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@OwnerId", _userId);
+
+                    object result = cmd.ExecuteScalar();
+                    decimal gelir = result != DBNull.Value ? Convert.ToDecimal(result) : 0;
+
+                    MessageBox.Show("Toplam geliriniz: " + gelir + " ₺", "Gelir Bilgisi");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Hata: " + ex.Message);
+                }
+            }
+        }
+
+
     }
 }

@@ -62,15 +62,16 @@ namespace TinyHouse.UI
                     }
 
                     string insertQuery = @"
-                        INSERT INTO Users (FullName, Email, Password, Role)
-                        VALUES (@FullName, @Email, @Password, @Role)";
+    INSERT INTO Users (FullName, Email, Password, Role, IsActive)
+    VALUES (@FullName, @Email, @Password, @Role, @IsActive)";
+              
 
                     SqlCommand cmd = new SqlCommand(insertQuery, conn);
                     cmd.Parameters.AddWithValue("@FullName", fullName);
                     cmd.Parameters.AddWithValue("@Email", email);
                     cmd.Parameters.AddWithValue("@Password", password);
                     cmd.Parameters.AddWithValue("@Role", role);
-
+                    cmd.Parameters.AddWithValue("@IsActive", 1);
                     int result = cmd.ExecuteNonQuery();
 
                     if (result > 0)

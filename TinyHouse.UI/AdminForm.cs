@@ -28,16 +28,21 @@ namespace TinyHouse.UI
                 }
 
                 // İlan sayısı
-                using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM TinyHouses", conn))
+                using (SqlCommand cmdRezervasyon = new SqlCommand("SELECT COUNT(*) FROM TinyHouses", conn))
                 {
-                    label7.Text = cmd.ExecuteScalar().ToString();
+                    label7.Text = cmdRezervasyon.ExecuteScalar().ToString();
                 }
 
-                // Rezervasyon sayısı
-                using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM Reservations", conn))
-                {
-                    label8.Text = cmd.ExecuteScalar().ToString();
-                }
+                /*   Rezervasyon sayısın, COUNT fonksiyonu ile de yazabiliriz
+                     using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM Reservations", conn))
+                    {
+                        label8.Text = cmd.ExecuteScalar().ToString();
+                     }*/
+                string query = "SELECT dbo.fn_ToplamRezervasyonSayisi()";
+                SqlCommand cmdRezervasyonSayisi = new SqlCommand(query, conn);
+                label8.Text = cmdRezervasyonSayisi.ExecuteScalar().ToString();
+
+
             }
         }
 

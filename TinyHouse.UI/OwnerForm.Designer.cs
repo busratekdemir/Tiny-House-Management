@@ -33,6 +33,7 @@
             btnAddHouse = new Button();
             btnLogout = new Button();
             btnUpdate = new Button();
+            button1 = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvMyHouses).BeginInit();
             SuspendLayout();
             // 
@@ -93,12 +94,24 @@
             btnUpdate.UseVisualStyleBackColor = false;
             btnUpdate.Click += btnUpdate_Click;
             // 
+            // button1
+            // 
+            button1.BackColor = Color.LemonChiffon;
+            button1.Location = new Point(669, 383);
+            button1.Name = "button1";
+            button1.Size = new Size(178, 29);
+            button1.TabIndex = 7;
+            button1.Text = "Toplam Geliri Göster";
+            button1.UseVisualStyleBackColor = false;
+            button1.Click += button1_Click;
+            // 
             // OwnerForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Lavender;
             ClientSize = new Size(855, 493);
+            Controls.Add(button1);
             Controls.Add(btnUpdate);
             Controls.Add(btnLogout);
             Controls.Add(btnAddHouse);
@@ -106,7 +119,6 @@
             Controls.Add(lblTitle);
             Name = "OwnerForm";
             Text = "OwnerForm";
-            Load += OwnerForm_Load;
             ((System.ComponentModel.ISupportInitialize)dgvMyHouses).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -120,5 +132,6 @@
         private Button button3;
         private Button btnLogout;
         private Button btnUpdate;
+        private Button button1;
     }
 }
