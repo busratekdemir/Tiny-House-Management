@@ -7,8 +7,7 @@ namespace TinyHouse.UI
 {
     public partial class UserListForm : Form
     {
-        private string _connectionString = @"Server=DESKTOP-2U2UUHO\SQLEXPRESS;Database=TinyHouseDB;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;";
-           
+        private string _connectionString = DbHelper.GetConnectionString();
 
 
 

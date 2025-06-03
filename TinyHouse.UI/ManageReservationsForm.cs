@@ -7,7 +7,7 @@ namespace TinyHouse.UI
 {
     public partial class ManageReservationsForm : Form
     {
-        private string connectionString = @"Server=DESKTOP-2U2UUHO\SQLEXPRESS;Database=TinyHouseDB;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;";
+        private string connectionString = DbHelper.GetConnectionString();
 
         public ManageReservationsForm()
         {
@@ -88,6 +88,9 @@ namespace TinyHouse.UI
             this.Close();
         }
 
-        
+        private void dgvReservations_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
     }
 }

@@ -29,53 +29,63 @@
         private void InitializeComponent()
         {
             dgvHouses = new DataGridView();
-            button1 = new Button();
-            button2 = new Button();
-            button3 = new Button();
+            btnMyRes = new Button();
+            btnReserve = new Button();
+            btnLogout = new Button();
             lblTitle = new Label();
             ((System.ComponentModel.ISupportInitialize)dgvHouses).BeginInit();
             SuspendLayout();
             // 
             // dgvHouses
             // 
+            dgvHouses.AllowUserToAddRows = false;
+            dgvHouses.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dgvHouses.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvHouses.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvHouses.Location = new Point(12, 65);
+            dgvHouses.MultiSelect = false;
             dgvHouses.Name = "dgvHouses";
             dgvHouses.ReadOnly = true;
             dgvHouses.RowHeadersWidth = 51;
+            dgvHouses.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvHouses.Size = new Size(801, 352);
             dgvHouses.TabIndex = 0;
-            dgvHouses.CellContentClick += dataGridView1_CellContentClick;
             // 
-            // button1
+            // btnMyRes
             // 
-            button1.BackColor = Color.LemonChiffon;
-            button1.Location = new Point(31, 423);
-            button1.Name = "button1";
-            button1.Size = new Size(94, 29);
-            button1.TabIndex = 1;
-            button1.Text = "button1";
-            button1.UseVisualStyleBackColor = false;
+            btnMyRes.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            btnMyRes.BackColor = Color.LemonChiffon;
+            btnMyRes.Location = new Point(12, 423);
+            btnMyRes.Name = "btnMyRes";
+            btnMyRes.Size = new Size(152, 29);
+            btnMyRes.TabIndex = 1;
+            btnMyRes.Text = "Rezervasyonlarım";
+            btnMyRes.UseVisualStyleBackColor = false;
+            btnMyRes.Click += btnMyRes_Click_1;
             // 
-            // button2
+            // btnReserve
             // 
-            button2.BackColor = Color.LemonChiffon;
-            button2.Location = new Point(341, 423);
-            button2.Name = "button2";
-            button2.Size = new Size(94, 29);
-            button2.TabIndex = 2;
-            button2.Text = "button2";
-            button2.UseVisualStyleBackColor = false;
+            btnReserve.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            btnReserve.BackColor = Color.LemonChiffon;
+            btnReserve.Location = new Point(217, 423);
+            btnReserve.Name = "btnReserve";
+            btnReserve.Size = new Size(152, 29);
+            btnReserve.TabIndex = 2;
+            btnReserve.Text = "Rezervasyon yap";
+            btnReserve.UseVisualStyleBackColor = false;
+            btnReserve.Click += btnReserve_Click_1;
             // 
-            // button3
+            // btnLogout
             // 
-            button3.BackColor = Color.LemonChiffon;
-            button3.Location = new Point(719, 423);
-            button3.Name = "button3";
-            button3.Size = new Size(94, 29);
-            button3.TabIndex = 3;
-            button3.Text = "button3";
-            button3.UseVisualStyleBackColor = false;
+            btnLogout.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnLogout.BackColor = Color.LemonChiffon;
+            btnLogout.Location = new Point(719, 423);
+            btnLogout.Name = "btnLogout";
+            btnLogout.Size = new Size(94, 29);
+            btnLogout.TabIndex = 3;
+            btnLogout.Text = "Çıkış";
+            btnLogout.UseVisualStyleBackColor = false;
+            btnLogout.Click += btnLogout_Click_1;
             // 
             // lblTitle
             // 
@@ -93,9 +103,9 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(834, 490);
             Controls.Add(lblTitle);
-            Controls.Add(button3);
-            Controls.Add(button2);
-            Controls.Add(button1);
+            Controls.Add(btnLogout);
+            Controls.Add(btnReserve);
+            Controls.Add(btnMyRes);
             Controls.Add(dgvHouses);
             Name = "KiraciForm";
             Text = "KiraciForm";
@@ -111,5 +121,8 @@
         private Button button2;
         private Button button3;
         private Label lblTitle;
+        private Button btnMyRes;
+        private Button btnReserve;
+        private Button btnLogout;
     }
 }

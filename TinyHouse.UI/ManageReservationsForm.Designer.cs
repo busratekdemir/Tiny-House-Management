@@ -35,17 +35,21 @@
             // 
             // dgvReservations
             // 
+            dgvReservations.AllowUserToAddRows = false;
             dgvReservations.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvReservations.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvReservations.BackgroundColor = SystemColors.ActiveCaption;
             dgvReservations.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvReservations.Location = new Point(37, 61);
+            dgvReservations.MultiSelect = false;
             dgvReservations.Name = "dgvReservations";
             dgvReservations.ReadOnly = true;
             dgvReservations.RowHeadersWidth = 51;
+            dgvReservations.SelectionMode = DataGridViewSelectionMode.FullColumnSelect;
             dgvReservations.Size = new Size(676, 435);
             dgvReservations.TabIndex = 0;
             dgvReservations.CellClick += dgvReservations_CellClick;
+            dgvReservations.CellContentClick += dgvReservations_CellContentClick;
             // 
             // btnBack
             // 

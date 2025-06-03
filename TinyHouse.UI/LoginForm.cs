@@ -42,7 +42,7 @@ namespace TinyHouse.UI
                 return;
             }
 
-            string connectionString = @"Server=DESKTOP-2U2UUHO\SQLEXPRESS;Database=TinyHouseDB;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;";
+            string connectionString = DbHelper.GetConnectionString();
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -84,8 +84,12 @@ namespace TinyHouse.UI
                                 }
                                 else if (role == "Kiracı")
                                 {
-                                    MessageBox.Show("Kiracı paneli yakında!");
+                                    KiraciForm kiraciForm = new KiraciForm(userId);
+                                    this.Hide();
+                                    kiraciForm.ShowDialog();
+                                    this.Close();
                                 }
+
                             }
                             else
                             {

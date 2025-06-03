@@ -7,7 +7,7 @@ namespace TinyHouse.UI
     public partial class AddListingForm : Form
     {
         private int ownerId;
-        private string connectionString = @"Server=DESKTOP-2U2UUHO\SQLEXPRESS;Database=TinyHouseDB;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;";
+        private string connectionString = DbHelper.GetConnectionString();
 
         public AddListingForm(int ownerId)
         {
@@ -61,10 +61,6 @@ namespace TinyHouse.UI
             this.Close();
         }
 
-        private void AddListingForm_Load(object sender, EventArgs e)
-        {
-
-        }
     }
 }
 
