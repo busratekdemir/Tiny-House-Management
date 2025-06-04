@@ -42,22 +42,25 @@
             dgvHouses.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvHouses.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvHouses.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvHouses.Location = new Point(12, 65);
+            dgvHouses.Location = new Point(10, 49);
+            dgvHouses.Margin = new Padding(3, 2, 3, 2);
             dgvHouses.MultiSelect = false;
             dgvHouses.Name = "dgvHouses";
             dgvHouses.ReadOnly = true;
             dgvHouses.RowHeadersWidth = 51;
             dgvHouses.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvHouses.Size = new Size(801, 352);
+            dgvHouses.Size = new Size(701, 264);
             dgvHouses.TabIndex = 0;
+            dgvHouses.CellContentClick += dgvHouses_CellContentClick;
             // 
             // btnMyRes
             // 
             btnMyRes.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             btnMyRes.BackColor = Color.LemonChiffon;
-            btnMyRes.Location = new Point(12, 423);
+            btnMyRes.Location = new Point(10, 317);
+            btnMyRes.Margin = new Padding(3, 2, 3, 2);
             btnMyRes.Name = "btnMyRes";
-            btnMyRes.Size = new Size(152, 29);
+            btnMyRes.Size = new Size(133, 22);
             btnMyRes.TabIndex = 1;
             btnMyRes.Text = "Rezervasyonlarım";
             btnMyRes.UseVisualStyleBackColor = false;
@@ -67,9 +70,10 @@
             // 
             btnReserve.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             btnReserve.BackColor = Color.LemonChiffon;
-            btnReserve.Location = new Point(217, 423);
+            btnReserve.Location = new Point(190, 317);
+            btnReserve.Margin = new Padding(3, 2, 3, 2);
             btnReserve.Name = "btnReserve";
-            btnReserve.Size = new Size(152, 29);
+            btnReserve.Size = new Size(133, 22);
             btnReserve.TabIndex = 2;
             btnReserve.Text = "Rezervasyon yap";
             btnReserve.UseVisualStyleBackColor = false;
@@ -79,9 +83,10 @@
             // 
             btnLogout.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             btnLogout.BackColor = Color.LemonChiffon;
-            btnLogout.Location = new Point(719, 423);
+            btnLogout.Location = new Point(629, 317);
+            btnLogout.Margin = new Padding(3, 2, 3, 2);
             btnLogout.Name = "btnLogout";
-            btnLogout.Size = new Size(94, 29);
+            btnLogout.Size = new Size(82, 22);
             btnLogout.TabIndex = 3;
             btnLogout.Text = "Çıkış";
             btnLogout.UseVisualStyleBackColor = false;
@@ -91,24 +96,26 @@
             // 
             lblTitle.AutoSize = true;
             lblTitle.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 162);
-            lblTitle.Location = new Point(263, 24);
+            lblTitle.Location = new Point(230, 18);
             lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(230, 38);
+            lblTitle.Size = new Size(179, 30);
             lblTitle.TabIndex = 4;
             lblTitle.Text = "Tiny House Evleri";
             // 
             // KiraciForm
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(834, 490);
+            ClientSize = new Size(730, 368);
             Controls.Add(lblTitle);
             Controls.Add(btnLogout);
             Controls.Add(btnReserve);
             Controls.Add(btnMyRes);
             Controls.Add(dgvHouses);
+            Margin = new Padding(3, 2, 3, 2);
             Name = "KiraciForm";
             Text = "KiraciForm";
+            Load += KiraciForm_Load;
             ((System.ComponentModel.ISupportInitialize)dgvHouses).EndInit();
             ResumeLayout(false);
             PerformLayout();

@@ -16,10 +16,7 @@ namespace TinyHouse.UI
             _userId = userId;
         }
 
-        private void KiraciForm_Load(object sender, EventArgs e)
-        {
-            ListeleIlanlar();
-        }
+        
         private void ListeleIlanlar()
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
@@ -85,6 +82,14 @@ namespace TinyHouse.UI
             this.Close();
         }
 
-        
+        private void dgvHouses_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void KiraciForm_Load(object sender, EventArgs e)
+        {
+            ListeleIlanlar();
+        }
     }
 }

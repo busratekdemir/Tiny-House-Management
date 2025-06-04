@@ -41,9 +41,9 @@
             // 
             lblTitle.AutoSize = true;
             lblTitle.Font = new Font("Segoe UI", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 162);
-            lblTitle.Location = new Point(328, 9);
+            lblTitle.Location = new Point(287, 7);
             lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(134, 38);
+            lblTitle.Size = new Size(104, 30);
             lblTitle.TabIndex = 0;
             lblTitle.Text = "İlanlarım";
             // 
@@ -53,20 +53,22 @@
             dgvMyHouses.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvMyHouses.BackgroundColor = SystemColors.ActiveCaption;
             dgvMyHouses.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvMyHouses.Location = new Point(-1, 62);
+            dgvMyHouses.Location = new Point(-1, 46);
+            dgvMyHouses.Margin = new Padding(3, 2, 3, 2);
             dgvMyHouses.Name = "dgvMyHouses";
             dgvMyHouses.ReadOnly = true;
             dgvMyHouses.RowHeadersWidth = 51;
-            dgvMyHouses.Size = new Size(848, 310);
+            dgvMyHouses.Size = new Size(742, 232);
             dgvMyHouses.TabIndex = 1;
             dgvMyHouses.CellClick += dgvMyHouses_CellClick;
             // 
             // btnAddHouse
             // 
             btnAddHouse.BackColor = Color.LemonChiffon;
-            btnAddHouse.Location = new Point(51, 378);
+            btnAddHouse.Location = new Point(45, 284);
+            btnAddHouse.Margin = new Padding(3, 2, 3, 2);
             btnAddHouse.Name = "btnAddHouse";
-            btnAddHouse.Size = new Size(168, 32);
+            btnAddHouse.Size = new Size(147, 24);
             btnAddHouse.TabIndex = 2;
             btnAddHouse.Text = "İlan ekle";
             btnAddHouse.UseVisualStyleBackColor = false;
@@ -75,9 +77,10 @@
             // btnLogout
             // 
             btnLogout.BackColor = Color.LemonChiffon;
-            btnLogout.Location = new Point(753, 452);
+            btnLogout.Location = new Point(659, 339);
+            btnLogout.Margin = new Padding(3, 2, 3, 2);
             btnLogout.Name = "btnLogout";
-            btnLogout.Size = new Size(94, 29);
+            btnLogout.Size = new Size(82, 22);
             btnLogout.TabIndex = 5;
             btnLogout.Text = "Çıkış yap";
             btnLogout.UseVisualStyleBackColor = false;
@@ -86,9 +89,10 @@
             // btnUpdate
             // 
             btnUpdate.BackColor = Color.LemonChiffon;
-            btnUpdate.Location = new Point(247, 378);
+            btnUpdate.Location = new Point(216, 284);
+            btnUpdate.Margin = new Padding(3, 2, 3, 2);
             btnUpdate.Name = "btnUpdate";
-            btnUpdate.Size = new Size(168, 34);
+            btnUpdate.Size = new Size(147, 26);
             btnUpdate.TabIndex = 6;
             btnUpdate.Text = "İlan güncelle";
             btnUpdate.UseVisualStyleBackColor = false;
@@ -97,9 +101,10 @@
             // button1
             // 
             button1.BackColor = Color.LemonChiffon;
-            button1.Location = new Point(669, 383);
+            button1.Location = new Point(585, 287);
+            button1.Margin = new Padding(3, 2, 3, 2);
             button1.Name = "button1";
-            button1.Size = new Size(178, 29);
+            button1.Size = new Size(156, 22);
             button1.TabIndex = 7;
             button1.Text = "Toplam Geliri Göster";
             button1.UseVisualStyleBackColor = false;
@@ -107,18 +112,20 @@
             // 
             // OwnerForm
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Lavender;
-            ClientSize = new Size(855, 493);
+            ClientSize = new Size(748, 370);
             Controls.Add(button1);
             Controls.Add(btnUpdate);
             Controls.Add(btnLogout);
             Controls.Add(btnAddHouse);
             Controls.Add(dgvMyHouses);
             Controls.Add(lblTitle);
+            Margin = new Padding(3, 2, 3, 2);
             Name = "OwnerForm";
             Text = "OwnerForm";
+            Load += OwnerForm_Load;
             ((System.ComponentModel.ISupportInitialize)dgvMyHouses).EndInit();
             ResumeLayout(false);
             PerformLayout();

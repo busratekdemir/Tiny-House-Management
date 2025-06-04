@@ -21,3 +21,15 @@ C:\Users\DELL\OneDrive\Desktop\TinyHouseManagement\TinyHouse.Business\obj\Debug\
 C:\Users\DELL\OneDrive\Desktop\TinyHouseManagement\TinyHouse.Business\obj\Debug\net8.0\refint\TinyHouse.Business.dll
 C:\Users\DELL\OneDrive\Desktop\TinyHouseManagement\TinyHouse.Business\obj\Debug\net8.0\TinyHouse.Business.pdb
 C:\Users\DELL\OneDrive\Desktop\TinyHouseManagement\TinyHouse.Business\obj\Debug\net8.0\ref\TinyHouse.Business.dll
+C:\Users\hasan\Source\Repos\Tiny-House-Management\TinyHouse.Business\bin\Debug\net8.0\TinyHouse.Business.deps.json
+C:\Users\hasan\Source\Repos\Tiny-House-Management\TinyHouse.Business\bin\Debug\net8.0\TinyHouse.Business.dll
+C:\Users\hasan\Source\Repos\Tiny-House-Management\TinyHouse.Business\bin\Debug\net8.0\TinyHouse.Business.pdb
+C:\Users\hasan\Source\Repos\Tiny-House-Management\TinyHouse.Business\obj\Debug\net8.0\TinyHouse.Business.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\hasan\Source\Repos\Tiny-House-Management\TinyHouse.Business\obj\Debug\net8.0\TinyHouse.Business.AssemblyInfoInputs.cache
+C:\Users\hasan\Source\Repos\Tiny-House-Management\TinyHouse.Business\obj\Debug\net8.0\TinyHouse.Business.AssemblyInfo.cs
+C:\Users\hasan\Source\Repos\Tiny-House-Management\TinyHouse.Business\obj\Debug\net8.0\TinyHouse.Business.csproj.CoreCompileInputs.cache
+C:\Users\hasan\Source\Repos\Tiny-House-Management\TinyHouse.Business\obj\Debug\net8.0\TinyHouse.Business.sourcelink.json
+C:\Users\hasan\Source\Repos\Tiny-House-Management\TinyHouse.Business\obj\Debug\net8.0\TinyHouse.Business.dll
+C:\Users\hasan\Source\Repos\Tiny-House-Management\TinyHouse.Business\obj\Debug\net8.0\refint\TinyHouse.Business.dll
+C:\Users\hasan\Source\Repos\Tiny-House-Management\TinyHouse.Business\obj\Debug\net8.0\TinyHouse.Business.pdb
+C:\Users\hasan\Source\Repos\Tiny-House-Management\TinyHouse.Business\obj\Debug\net8.0\ref\TinyHouse.Business.dll

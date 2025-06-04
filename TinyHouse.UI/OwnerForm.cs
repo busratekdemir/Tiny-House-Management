@@ -130,6 +130,9 @@ namespace TinyHouse.UI
             }
         }
 
-
+        private void OwnerForm_Load(object sender, EventArgs e)
+        {
+            ListeleIlanlar();
+        }
     }
 }
