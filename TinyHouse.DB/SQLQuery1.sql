@@ -1,0 +1,27 @@
+CREATE TABLE Users (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    FullName NVARCHAR(100) NOT NULL,
+    Email NVARCHAR(100) NOT NULL UNIQUE,
+    Password NVARCHAR(100) NOT NULL,
+    Role NVARCHAR(50) NOT NULL,
+    IsActive BIT DEFAULT 1
+);
+CREATE TABLE TinyHouses (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    Title NVARCHAR(150) NOT NULL,
+    Description NVARCHAR(MAX),
+    PricePerNight DECIMAL(10, 2) NOT NULL,
+    Location NVARCHAR(100) NOT NULL,
+    OwnerId INT NOT NULL,
+    FOREIGN KEY (OwnerId) REFERENCES Users(Id)
+);
+CREATE TABLE Reservations (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    UserId INT NOT NULL,
+    TinyHouseId INT NOT NULL,
+    StartDate DATE NOT NULL,
+    EndDate DATE NOT NULL,
+    TotalPrice DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (UserId) REFERENCES Users(Id),
+    FOREIGN KEY (TinyHouseId) REFERENCES TinyHouses(Id)
+);
