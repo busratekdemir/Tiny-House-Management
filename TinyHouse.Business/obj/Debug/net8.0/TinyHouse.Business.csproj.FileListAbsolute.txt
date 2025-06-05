@@ -33,3 +33,15 @@ C:\Users\hasan\Source\Repos\Tiny-House-Management\TinyHouse.Business\obj\Debug\n
 C:\Users\hasan\Source\Repos\Tiny-House-Management\TinyHouse.Business\obj\Debug\net8.0\refint\TinyHouse.Business.dll
 C:\Users\hasan\Source\Repos\Tiny-House-Management\TinyHouse.Business\obj\Debug\net8.0\TinyHouse.Business.pdb
 C:\Users\hasan\Source\Repos\Tiny-House-Management\TinyHouse.Business\obj\Debug\net8.0\ref\TinyHouse.Business.dll
+C:\Users\DELL\OneDrive\Desktop\yeni_TinyHouseManagement\TinyhouseManagement\TinyHouse.Business\bin\Debug\net8.0\TinyHouse.Business.deps.json
+C:\Users\DELL\OneDrive\Desktop\yeni_TinyHouseManagement\TinyhouseManagement\TinyHouse.Business\bin\Debug\net8.0\TinyHouse.Business.dll
+C:\Users\DELL\OneDrive\Desktop\yeni_TinyHouseManagement\TinyhouseManagement\TinyHouse.Business\bin\Debug\net8.0\TinyHouse.Business.pdb
+C:\Users\DELL\OneDrive\Desktop\yeni_TinyHouseManagement\TinyhouseManagement\TinyHouse.Business\obj\Debug\net8.0\TinyHouse.Business.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\DELL\OneDrive\Desktop\yeni_TinyHouseManagement\TinyhouseManagement\TinyHouse.Business\obj\Debug\net8.0\TinyHouse.Business.AssemblyInfoInputs.cache
+C:\Users\DELL\OneDrive\Desktop\yeni_TinyHouseManagement\TinyhouseManagement\TinyHouse.Business\obj\Debug\net8.0\TinyHouse.Business.AssemblyInfo.cs
+C:\Users\DELL\OneDrive\Desktop\yeni_TinyHouseManagement\TinyhouseManagement\TinyHouse.Business\obj\Debug\net8.0\TinyHouse.Business.csproj.CoreCompileInputs.cache
+C:\Users\DELL\OneDrive\Desktop\yeni_TinyHouseManagement\TinyhouseManagement\TinyHouse.Business\obj\Debug\net8.0\TinyHouse.Business.sourcelink.json
+C:\Users\DELL\OneDrive\Desktop\yeni_TinyHouseManagement\TinyhouseManagement\TinyHouse.Business\obj\Debug\net8.0\TinyHouse.Business.dll
+C:\Users\DELL\OneDrive\Desktop\yeni_TinyHouseManagement\TinyhouseManagement\TinyHouse.Business\obj\Debug\net8.0\refint\TinyHouse.Business.dll
+C:\Users\DELL\OneDrive\Desktop\yeni_TinyHouseManagement\TinyhouseManagement\TinyHouse.Business\obj\Debug\net8.0\TinyHouse.Business.pdb
+C:\Users\DELL\OneDrive\Desktop\yeni_TinyHouseManagement\TinyhouseManagement\TinyHouse.Business\obj\Debug\net8.0\ref\TinyHouse.Business.dll

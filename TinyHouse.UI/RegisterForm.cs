@@ -7,13 +7,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Data.SqlClient;
 
-
-
-
 namespace TinyHouse.UI
 {
     public partial class RegisterForm : Form
     {
+        // Veritabanı bağlantı cümlesi
         private string connectionString = DbHelper.GetConnectionString();
 
         public RegisterForm()
@@ -21,6 +19,7 @@ namespace TinyHouse.UI
             InitializeComponent();
         }
 
+        // Form yüklendiğinde çalışır, rol seçenekleri combobox'a eklenir
         private void RegisterForm_Load(object sender, EventArgs e)
         {
             cmbRole.Items.Clear();
@@ -28,13 +27,16 @@ namespace TinyHouse.UI
             cmbRole.Items.Add("Ev Sahibi");
         }
 
+        // Kayıt ol butonuna basıldığında çalışır
         private void btnRegister_Click(object sender, EventArgs e)
         {
+            // Formdan gelen kullanıcı bilgileri alınır
             string fullName = txtFullName.Text;
             string email = txtEmail.Text;
             string password = txtPassword.Text;
             string role = cmbRole.SelectedItem?.ToString();
 
+            // Boş alan kontrolü
             if (string.IsNullOrWhiteSpace(fullName) ||
                 string.IsNullOrWhiteSpace(email) ||
                 string.IsNullOrWhiteSpace(password) ||
@@ -50,6 +52,7 @@ namespace TinyHouse.UI
                 {
                     conn.Open();
 
+                    // Aynı email ile kayıtlı kullanıcı var mı kontrol edilir
                     string checkQuery = "SELECT COUNT(*) FROM Users WHERE Email = @Email";
                     SqlCommand checkCmd = new SqlCommand(checkQuery, conn);
                     checkCmd.Parameters.AddWithValue("@Email", email);
@@ -61,19 +64,21 @@ namespace TinyHouse.UI
                         return;
                     }
 
+                    // Kullanıcı kaydı yapılır
                     string insertQuery = @"
     INSERT INTO Users (FullName, Email, Password, Role, IsActive)
     VALUES (@FullName, @Email, @Password, @Role, @IsActive)";
-              
 
                     SqlCommand cmd = new SqlCommand(insertQuery, conn);
                     cmd.Parameters.AddWithValue("@FullName", fullName);
                     cmd.Parameters.AddWithValue("@Email", email);
                     cmd.Parameters.AddWithValue("@Password", password);
                     cmd.Parameters.AddWithValue("@Role", role);
-                    cmd.Parameters.AddWithValue("@IsActive", 1);
+                    cmd.Parameters.AddWithValue("@IsActive", 1); // kullanıcı aktif olarak kaydedilir
+
                     int result = cmd.ExecuteNonQuery();
 
+                    // Kayıt başarılıysa giriş ekranına geçilir
                     if (result > 0)
                     {
                         MessageBox.Show("Kayıt başarılı!");
@@ -88,11 +93,13 @@ namespace TinyHouse.UI
                 }
                 catch (Exception ex)
                 {
+                    // Hata oluşursa gösterilir
                     MessageBox.Show("HATA: " + ex.Message);
                 }
             }
         }
 
+        // ComboBox seçim değiştiğinde çalışır (şu an boş)
         private void cmbRole_SelectedIndexChanged(object sender, EventArgs e)
         {
         }
