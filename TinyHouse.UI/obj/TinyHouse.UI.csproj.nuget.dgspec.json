@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\DELL\\OneDrive\\Desktop\\yeni_TinyHouseManagement\\TinyhouseManagement\\TinyHouse.UI\\TinyHouse.UI.csproj": {}
+    "C:\\Users\\DELL\\source\\repos\\Tiny-House-Management\\y\\TinyHouse.UI\\TinyHouse.UI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\DELL\\OneDrive\\Desktop\\yeni_TinyHouseManagement\\TinyhouseManagement\\TinyHouse.Business\\TinyHouse.Business.csproj": {
+    "C:\\Users\\DELL\\source\\repos\\Tiny-House-Management\\y\\TinyHouse.Business\\TinyHouse.Business.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\DELL\\OneDrive\\Desktop\\yeni_TinyHouseManagement\\TinyhouseManagement\\TinyHouse.Business\\TinyHouse.Business.csproj",
+        "projectUniqueName": "C:\\Users\\DELL\\source\\repos\\Tiny-House-Management\\y\\TinyHouse.Business\\TinyHouse.Business.csproj",
         "projectName": "TinyHouse.Business",
-        "projectPath": "C:\\Users\\DELL\\OneDrive\\Desktop\\yeni_TinyHouseManagement\\TinyhouseManagement\\TinyHouse.Business\\TinyHouse.Business.csproj",
+        "projectPath": "C:\\Users\\DELL\\source\\repos\\Tiny-House-Management\\y\\TinyHouse.Business\\TinyHouse.Business.csproj",
         "packagesPath": "C:\\Users\\DELL\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\DELL\\OneDrive\\Desktop\\yeni_TinyHouseManagement\\TinyhouseManagement\\TinyHouse.Business\\obj\\",
+        "outputPath": "C:\\Users\\DELL\\source\\repos\\Tiny-House-Management\\y\\TinyHouse.Business\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -69,14 +69,14 @@
         }
       }
     },
-    "C:\\Users\\DELL\\OneDrive\\Desktop\\yeni_TinyHouseManagement\\TinyhouseManagement\\TinyHouse.Data\\TinyHouse.Data.csproj": {
+    "C:\\Users\\DELL\\source\\repos\\Tiny-House-Management\\y\\TinyHouse.Data\\TinyHouse.Data.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\DELL\\OneDrive\\Desktop\\yeni_TinyHouseManagement\\TinyhouseManagement\\TinyHouse.Data\\TinyHouse.Data.csproj",
+        "projectUniqueName": "C:\\Users\\DELL\\source\\repos\\Tiny-House-Management\\y\\TinyHouse.Data\\TinyHouse.Data.csproj",
         "projectName": "TinyHouse.Data",
-        "projectPath": "C:\\Users\\DELL\\OneDrive\\Desktop\\yeni_TinyHouseManagement\\TinyhouseManagement\\TinyHouse.Data\\TinyHouse.Data.csproj",
+        "projectPath": "C:\\Users\\DELL\\source\\repos\\Tiny-House-Management\\y\\TinyHouse.Data\\TinyHouse.Data.csproj",
         "packagesPath": "C:\\Users\\DELL\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\DELL\\OneDrive\\Desktop\\yeni_TinyHouseManagement\\TinyhouseManagement\\TinyHouse.Data\\obj\\",
+        "outputPath": "C:\\Users\\DELL\\source\\repos\\Tiny-House-Management\\y\\TinyHouse.Data\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -134,14 +134,14 @@
         }
       }
     },
-    "C:\\Users\\DELL\\OneDrive\\Desktop\\yeni_TinyHouseManagement\\TinyhouseManagement\\TinyHouse.UI\\TinyHouse.UI.csproj": {
+    "C:\\Users\\DELL\\source\\repos\\Tiny-House-Management\\y\\TinyHouse.UI\\TinyHouse.UI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\DELL\\OneDrive\\Desktop\\yeni_TinyHouseManagement\\TinyhouseManagement\\TinyHouse.UI\\TinyHouse.UI.csproj",
+        "projectUniqueName": "C:\\Users\\DELL\\source\\repos\\Tiny-House-Management\\y\\TinyHouse.UI\\TinyHouse.UI.csproj",
         "projectName": "TinyHouse.UI",
-        "projectPath": "C:\\Users\\DELL\\OneDrive\\Desktop\\yeni_TinyHouseManagement\\TinyhouseManagement\\TinyHouse.UI\\TinyHouse.UI.csproj",
+        "projectPath": "C:\\Users\\DELL\\source\\repos\\Tiny-House-Management\\y\\TinyHouse.UI\\TinyHouse.UI.csproj",
         "packagesPath": "C:\\Users\\DELL\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\DELL\\OneDrive\\Desktop\\yeni_TinyHouseManagement\\TinyhouseManagement\\TinyHouse.UI\\obj\\",
+        "outputPath": "C:\\Users\\DELL\\source\\repos\\Tiny-House-Management\\y\\TinyHouse.UI\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -162,11 +162,11 @@
           "net8.0-windows7.0": {
             "targetAlias": "net8.0-windows",
             "projectReferences": {
-              "C:\\Users\\DELL\\OneDrive\\Desktop\\yeni_TinyHouseManagement\\TinyhouseManagement\\TinyHouse.Business\\TinyHouse.Business.csproj": {
-                "projectPath": "C:\\Users\\DELL\\OneDrive\\Desktop\\yeni_TinyHouseManagement\\TinyhouseManagement\\TinyHouse.Business\\TinyHouse.Business.csproj"
+              "C:\\Users\\DELL\\source\\repos\\Tiny-House-Management\\y\\TinyHouse.Business\\TinyHouse.Business.csproj": {
+                "projectPath": "C:\\Users\\DELL\\source\\repos\\Tiny-House-Management\\y\\TinyHouse.Business\\TinyHouse.Business.csproj"
               },
-              "C:\\Users\\DELL\\OneDrive\\Desktop\\yeni_TinyHouseManagement\\TinyhouseManagement\\TinyHouse.Data\\TinyHouse.Data.csproj": {
-                "projectPath": "C:\\Users\\DELL\\OneDrive\\Desktop\\yeni_TinyHouseManagement\\TinyhouseManagement\\TinyHouse.Data\\TinyHouse.Data.csproj"
+              "C:\\Users\\DELL\\source\\repos\\Tiny-House-Management\\y\\TinyHouse.Data\\TinyHouse.Data.csproj": {
+                "projectPath": "C:\\Users\\DELL\\source\\repos\\Tiny-House-Management\\y\\TinyHouse.Data\\TinyHouse.Data.csproj"
               }
             }
           }

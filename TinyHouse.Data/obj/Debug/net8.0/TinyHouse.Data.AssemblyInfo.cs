@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TinyHouse.Data")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dfb18e8b9831423b65ab4ec0a9e9cbc968a5e37c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2d8d942892f80fe17be60cdad961b9c2cc59fd99")]
 [assembly: System.Reflection.AssemblyProductAttribute("TinyHouse.Data")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TinyHouse.Data")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
