@@ -49,7 +49,6 @@
             dgvReservations.Size = new Size(676, 435);
             dgvReservations.TabIndex = 0;
             dgvReservations.CellClick += dgvReservations_CellClick;
-            dgvReservations.CellContentClick += dgvReservations_CellContentClick;
             // 
             // btnBack
             // 

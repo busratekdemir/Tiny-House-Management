@@ -1,40 +1,84 @@
 ﻿using System;
-using System.Data;
-using Microsoft.Data.SqlClient;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
+using TinyHouse.Business.Services;
+using TinyHouse.Data.Models;
+
+using TinyHouse.UI.Helpers;         // ← SessionContext, UserRole burada
+
 
 namespace TinyHouse.UI
 {
     public partial class UserListForm : Form
     {
-        private string _connectionString = DbHelper.GetConnectionString();
-
-
+        private readonly UserService _userService;
 
         public UserListForm()
         {
             InitializeComponent();
+            _userService = new UserService();
         }
 
         private void UserListForm_Load(object sender, EventArgs e)
         {
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            try
             {
-                conn.Open();
-                string query = "SELECT Id, FullName, Email, Role FROM Users";
+                List<UserModel> users = _userService.GetAllUsers();
+                dgvUsers.DataSource = users.Select(u => new
+                {
+                    u.Id,
+                    u.FullName,
+                    u.Email,
+                    u.Role,
+                    Durum = u.IsActive ? "Aktif" : "Pasif"
+                }).ToList();
 
-                SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
-                DataTable dt = new DataTable();
-                adapter.Fill(dt);
+                if (!dgvUsers.Columns.Contains("Pasifleştir"))
+                {
+                    var btn = new DataGridViewButtonColumn
+                    {
+                        Name = "Pasifleştir",
+                        HeaderText = "Pasifleştir",
+                        Text = "Pasifleştir",
+                        UseColumnTextForButtonValue = true
+                    };
+                    dgvUsers.Columns.Add(btn);
+                }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Kullanıcılar yüklenirken hata oluştu.");
+            }
+        }
 
-                dgvUsers.DataSource = dt;
+        private void dgvUsers_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && dgvUsers.Columns[e.ColumnIndex].Name == "Pasifleştir")
+            {
+                int userId = Convert.ToInt32(dgvUsers.Rows[e.RowIndex].Cells["Id"].Value);
+                var result = MessageBox.Show(
+                    "Bu kullanıcıyı pasifleştirmek istediğinize emin misiniz?",
+                    "Onay", MessageBoxButtons.YesNo);
+
+                if (result == DialogResult.Yes)
+                {
+                    bool ok = _userService.Deactivate(userId);
+                    if (ok)
+                    {
+                        MessageBox.Show("Kullanıcı pasif yapıldı.");
+                        UserListForm_Load(null, null);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Pasifleştirme başarısız.");
+                    }
+                }
             }
         }
 
         private void btnBack_Click(object sender, EventArgs e)
         {
-            AdminForm adminForm = new AdminForm();
-            adminForm.Show();
             this.Close();
         }
     }

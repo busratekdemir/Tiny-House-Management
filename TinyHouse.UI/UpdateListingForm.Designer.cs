@@ -38,6 +38,13 @@
             btnUpdate = new Button();
             nudPrice = new NumericUpDown();
             txtLocation = new TextBox();
+            label5 = new Label();
+            txtPhotoUrls = new Label();
+            label7 = new Label();
+            txtPhotoUrls_ = new TextBox();
+            dtpAvailableFrom = new DateTimePicker();
+            dtpAvailableTo = new DateTimePicker();
+            chbIsActive = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)nudPrice).BeginInit();
             SuspendLayout();
             // 
@@ -65,7 +72,7 @@
             // 
             label3.AutoSize = true;
             label3.BackColor = Color.Thistle;
-            label3.Location = new Point(21, 214);
+            label3.Location = new Point(21, 152);
             label3.Name = "label3";
             label3.Size = new Size(97, 20);
             label3.TabIndex = 2;
@@ -75,7 +82,7 @@
             // 
             label4.AutoSize = true;
             label4.BackColor = Color.Thistle;
-            label4.Location = new Point(21, 254);
+            label4.Location = new Point(21, 183);
             label4.Name = "label4";
             label4.Size = new Size(63, 20);
             label4.TabIndex = 3;
@@ -92,35 +99,35 @@
             // 
             txtDescription.Location = new Point(142, 63);
             txtDescription.Name = "txtDescription";
-            txtDescription.Size = new Size(243, 124);
+            txtDescription.Size = new Size(243, 77);
             txtDescription.TabIndex = 5;
             txtDescription.Text = "";
             // 
             // btnCancel
             // 
             btnCancel.BackColor = Color.LemonChiffon;
-            btnCancel.Location = new Point(12, 337);
+            btnCancel.Location = new Point(12, 459);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(94, 29);
             btnCancel.TabIndex = 6;
             btnCancel.Text = "İptal";
             btnCancel.UseVisualStyleBackColor = false;
-            btnCancel.Click += btnCancel_Click_1;
+            btnCancel.Click += btnCancel_Click;
             // 
             // btnUpdate
             // 
             btnUpdate.BackColor = Color.LemonChiffon;
-            btnUpdate.Location = new Point(365, 337);
+            btnUpdate.Location = new Point(365, 459);
             btnUpdate.Name = "btnUpdate";
             btnUpdate.Size = new Size(94, 29);
             btnUpdate.TabIndex = 7;
             btnUpdate.Text = "Güncelle";
             btnUpdate.UseVisualStyleBackColor = false;
-            btnUpdate.Click += btnUpdate_Click_1;
+            btnUpdate.Click += btnUpdate_Click;
             // 
             // nudPrice
             // 
-            nudPrice.Location = new Point(142, 212);
+            nudPrice.Location = new Point(142, 150);
             nudPrice.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
             nudPrice.Name = "nudPrice";
             nudPrice.Size = new Size(150, 27);
@@ -128,17 +135,87 @@
             // 
             // txtLocation
             // 
-            txtLocation.Location = new Point(142, 254);
+            txtLocation.Location = new Point(142, 183);
             txtLocation.Name = "txtLocation";
             txtLocation.Size = new Size(243, 27);
             txtLocation.TabIndex = 9;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.BackColor = Color.Thistle;
+            label5.Location = new Point(21, 319);
+            label5.Name = "label5";
+            label5.Size = new Size(113, 20);
+            label5.TabIndex = 10;
+            label5.Text = "Geçerlilik bitişi :";
+            // 
+            // txtPhotoUrls
+            // 
+            txtPhotoUrls.AutoSize = true;
+            txtPhotoUrls.BackColor = Color.Thistle;
+            txtPhotoUrls.Location = new Point(21, 241);
+            txtPhotoUrls.Name = "txtPhotoUrls";
+            txtPhotoUrls.Size = new Size(172, 20);
+            txtPhotoUrls.TabIndex = 11;
+            txtPhotoUrls.Text = "Fotoğraf URL'leri(JSON) :";
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.BackColor = Color.Thistle;
+            label7.Location = new Point(21, 280);
+            label7.Name = "label7";
+            label7.Size = new Size(148, 20);
+            label7.TabIndex = 12;
+            label7.Text = "Geçerlilik başlangıcı :";
+            // 
+            // txtPhotoUrls_
+            // 
+            txtPhotoUrls_.Location = new Point(209, 238);
+            txtPhotoUrls_.Multiline = true;
+            txtPhotoUrls_.Name = "txtPhotoUrls_";
+            txtPhotoUrls_.Size = new Size(250, 27);
+            txtPhotoUrls_.TabIndex = 13;
+            // 
+            // dtpAvailableFrom
+            // 
+            dtpAvailableFrom.Location = new Point(209, 280);
+            dtpAvailableFrom.Name = "dtpAvailableFrom";
+            dtpAvailableFrom.Size = new Size(250, 27);
+            dtpAvailableFrom.TabIndex = 14;
+            // 
+            // dtpAvailableTo
+            // 
+            dtpAvailableTo.Location = new Point(209, 314);
+            dtpAvailableTo.Name = "dtpAvailableTo";
+            dtpAvailableTo.Size = new Size(250, 27);
+            dtpAvailableTo.TabIndex = 15;
+            // 
+            // chbIsActive
+            // 
+            chbIsActive.AutoSize = true;
+            chbIsActive.BackColor = Color.Thistle;
+            chbIsActive.Location = new Point(21, 381);
+            chbIsActive.Name = "chbIsActive";
+            chbIsActive.Size = new Size(90, 24);
+            chbIsActive.TabIndex = 16;
+            chbIsActive.Text = "Aktif mi?";
+            chbIsActive.UseVisualStyleBackColor = false;
             // 
             // UpdateListingForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.PeachPuff;
-            ClientSize = new Size(471, 378);
+            ClientSize = new Size(471, 500);
+            Controls.Add(chbIsActive);
+            Controls.Add(dtpAvailableTo);
+            Controls.Add(dtpAvailableFrom);
+            Controls.Add(txtPhotoUrls_);
+            Controls.Add(label7);
+            Controls.Add(txtPhotoUrls);
+            Controls.Add(label5);
             Controls.Add(txtLocation);
             Controls.Add(nudPrice);
             Controls.Add(btnUpdate);
@@ -169,5 +246,13 @@
         private Button btnUpdate;
         private NumericUpDown nudPrice;
         private TextBox txtLocation;
+        private Label label5;
+        private Label label6;
+        private Label label7;
+        private Label txtPhotoUrls;
+        private TextBox txtPhotoUrls_;
+        private DateTimePicker dtpAvailableFrom;
+        private DateTimePicker dtpAvailableTo;
+        private CheckBox chbIsActive;
     }
 }

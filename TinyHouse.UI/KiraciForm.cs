@@ -1,95 +1,147 @@
 ﻿using System;
-using System.Data;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Text.Json;
 using System.Windows.Forms;
-using Microsoft.Data.SqlClient;
+using TinyHouse.Business.Services;
+using TinyHouse.Data.Models;
+using TinyHouse.UI.Helpers;
 
 namespace TinyHouse.UI
 {
     public partial class KiraciForm : Form
     {
-        private int _userId;
-        private string _connectionString = DbHelper.GetConnectionString();
+        private readonly ReservationService _resService;
+        private readonly HouseService _houseService;
 
         public KiraciForm(int userId)
         {
             InitializeComponent();
-            _userId = userId;
+            _resService = new ReservationService();
+            _houseService = new HouseService();
+            SessionContext.CurrentUserId = userId;
+
+            Load += OnLoad;
+            dgvHouses.SelectionChanged += OnHouseSelectionChanged;
+            btnReserve.Click += OnReserveClick;
+            dgvMyReservations.CellContentClick += OnReservationCancel;
+            tabControl1.SelectedIndexChanged += OnTabChanged;
+            btnLogout.Click += (_, __) => Close();
         }
 
-        
-        private void ListeleIlanlar()
+        private void OnLoad(object sender, EventArgs e)
         {
-            using (SqlConnection conn = new SqlConnection(_connectionString))
-            {
-                conn.Open();
-                string query = "SELECT Id, Title, Location, PricePerNight FROM TinyHouses";
-
-                SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
-                DataTable dt = new DataTable();
-                adapter.Fill(dt);
-
-                dgvHouses.DataSource = dt;
-            }
+            dgvHouses.DataSource = _houseService.GetAllHouses();
+            HidePhotoPanel();
+            ReloadReservations();
         }
 
-        private void btnReserve_Click_1(object sender, EventArgs e)
+        private void OnHouseSelectionChanged(object sender, EventArgs e)
         {
             if (dgvHouses.CurrentRow == null)
             {
-                MessageBox.Show("Lütfen bir ilan seçin.");
+                HidePhotoPanel();
                 return;
             }
 
-            int ilanId = Convert.ToInt32(dgvHouses.CurrentRow.Cells["Id"].Value);
-
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            int id = Convert.ToInt32(dgvHouses.CurrentRow.Cells["Id"].Value);
+            var house = _houseService.GetHouseById(id);
+            if (house == null || string.IsNullOrWhiteSpace(house.PhotoUrls))
             {
-                conn.Open();
-
-                DateTime baslangic = DateTime.Now.Date.AddDays(1); // örnek tarih
-                DateTime bitis = DateTime.Now.Date.AddDays(3);     // örnek tarih
-                decimal fiyat = Convert.ToDecimal(dgvHouses.CurrentRow.Cells["PricePerNight"].Value);
-                decimal toplam = (decimal)(bitis - baslangic).TotalDays * fiyat;
-
-                string query = @"INSERT INTO Reservations (UserId, TinyHouseId, StartDate, EndDate, TotalPrice)
-                                 VALUES (@UserId, @TinyHouseId, @StartDate, @EndDate, @TotalPrice)";
-
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@UserId", _userId);
-                cmd.Parameters.AddWithValue("@TinyHouseId", ilanId);
-                cmd.Parameters.AddWithValue("@StartDate", baslangic);
-                cmd.Parameters.AddWithValue("@EndDate", bitis);
-                cmd.Parameters.AddWithValue("@TotalPrice", toplam);
-
-                int result = cmd.ExecuteNonQuery();
-                if (result > 0)
-                    MessageBox.Show("Rezervasyon başarılı!");
-                else
-                    MessageBox.Show("Hata oluştu.");
+                HidePhotoPanel();
+                return;
             }
+
+            List<string> urls;
+            try
+            {
+                urls = JsonSerializer.Deserialize<List<string>>(house.PhotoUrls) ?? new List<string>();
+            }
+            catch
+            {
+                urls = new List<string>();
+            }
+
+            flpPhotos.Controls.Clear();
+            foreach (var url in urls)
+            {
+                var pic = new PictureBox
+                {
+                    Width = 120,
+                    Height = 90,
+                    SizeMode = PictureBoxSizeMode.Zoom,
+                    Margin = new Padding(5),
+                    ImageLocation = url,
+                    BorderStyle = BorderStyle.FixedSingle
+                };
+                flpPhotos.Controls.Add(pic);
+            }
+            flpPhotos.Visible = urls.Count > 0;
         }
 
-        private void btnMyRes_Click_1(object sender, EventArgs e)
+        private void HidePhotoPanel()
         {
-            KiraciForm form = new KiraciForm(_userId);
-            form.ShowDialog();
+            flpPhotos.Controls.Clear();
+            flpPhotos.Visible = false;
         }
 
-        private void btnLogout_Click_1(object sender, EventArgs e)
+        private void OnReserveClick(object sender, EventArgs e)
         {
-            LoginForm loginForm = new LoginForm();
-            loginForm.Show();
-            this.Close();
+            if (dgvHouses.CurrentRow == null)
+                return;
+
+            int id = Convert.ToInt32(dgvHouses.CurrentRow.Cells["Id"].Value);
+            DateTime start = dtpStart.Value.Date;
+            DateTime end = dtpEnd.Value.Date;
+            int days = (end - start).Days;
+            if (days <= 0)
+            {
+                MessageBox.Show("Bitiş tarihi başlangıçtan sonra olmalı.");
+                return;
+            }
+
+            decimal price = Convert.ToDecimal(dgvHouses.CurrentRow.Cells["PricePerNight"].Value);
+            bool success = _resService.AddReservation(SessionContext.CurrentUserId, id, start, end, price * days);
+
+            MessageBox.Show(success ? "Talebin iletildi (onay bekliyor)." : "Bu tarihler dolu!");
+            if (success) ReloadReservations();
         }
 
-        private void dgvHouses_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void ReloadReservations()
         {
+            var data = _resService.GetReservationsByUser(SessionContext.CurrentUserId);
+            dgvMyReservations.DataSource = data;
 
+            if (!dgvMyReservations.Columns.Contains("btnCancel"))
+            {
+                dgvMyReservations.Columns.Add(new DataGridViewButtonColumn
+                {
+                    Name = "btnCancel",
+                    HeaderText = "İptal Et",
+                    Text = "İptal Et",
+                    UseColumnTextForButtonValue = true
+                });
+            }
+
+            if (dgvMyReservations.Columns.Contains("Id"))
+                dgvMyReservations.Columns["Id"].Visible = false;
         }
 
-        private void KiraciForm_Load(object sender, EventArgs e)
+        private void OnReservationCancel(object sender, DataGridViewCellEventArgs e)
         {
-            ListeleIlanlar();
+            if (e.RowIndex < 0 || dgvMyReservations.Columns[e.ColumnIndex].Name != "btnCancel")
+                return;
+
+            int resId = Convert.ToInt32(dgvMyReservations.Rows[e.RowIndex].Cells["Id"].Value);
+            bool done = _resService.CancelReservation(resId);
+            MessageBox.Show(done ? "Rezervasyon iptal edildi." : "İptal işlemi başarısız.");
+            if (done) ReloadReservations();
+        }
+
+        private void OnTabChanged(object sender, EventArgs e)
+        {
+            if (tabControl1.SelectedTab.Text == "Rezervasyonlarım")
+                ReloadReservations();
         }
     }
 }

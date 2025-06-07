@@ -1,23 +1,31 @@
-﻿using System;
+﻿using Microsoft.Data.SqlClient;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using TinyHouse.UI;
 using TinyHouse.Business;
-using Microsoft.Data.SqlClient;
+using TinyHouse.Business.Services;
+using TinyHouse.Data.Models;
+using TinyHouse.UI;
+using TinyHouse.UI.Helpers;
+
+
 
 namespace TinyHouse.UI
 {
     public partial class LoginForm : Form
     {
+        private readonly AuthService _authService;
         public LoginForm()
         {
             InitializeComponent();
+            _authService = new AuthService(); 
         }
 
         // Kayıt ol linkine tıklanınca RegisterForm açılır, mevcut LoginForm gizlenir.
@@ -29,85 +37,75 @@ namespace TinyHouse.UI
         }
 
         // Giriş yap butonuna tıklanınca çalışır.
+
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            string email = txtEmail.Text;
-            string password = txtPassword.Text;
+            string email = txtEmail.Text.Trim();
+            string password = txtPassword.Text.Trim();
 
-            // Boş alan kontrolü
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
             {
-                MessageBox.Show("Lütfen tüm alanları doldurun.");
+                MessageBox.Show("Lütfen e-posta ve şifre girin.");
+                return;
+            }
+            if (!Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+            {
+                MessageBox.Show("Geçerli bir e-posta girin.");
                 return;
             }
 
-            // Veritabanı bağlantı cümlesi alınır
-            string connectionString = DbHelper.GetConnectionString();
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            try
             {
-                try
+                var user = _authService.Authenticate(email, password);
+                if (user == null)
                 {
-                    connection.Open();
-
-                    // Kullanıcının aktif olup olmadığı ve bilgilerin doğru olup olmadığı kontrol edilir
-                    string query = "SELECT * FROM Users WHERE Email = @Email AND Password = @Password AND IsActive = 1";
-
-                    using (Microsoft.Data.SqlClient.SqlCommand command = new SqlCommand(query, connection))
-                    {
-                        command.Parameters.AddWithValue("@Email", email);
-                        command.Parameters.AddWithValue("@Password", password);
-
-                        using (SqlDataReader reader = command.ExecuteReader())
-                        {
-                            if (reader.Read())
-                            {
-                                // Giriş başarılıysa kullanıcı bilgileri alınır
-                                string role = reader["Role"].ToString();
-                                int userId = Convert.ToInt32(reader["Id"]);
-                                string fullName = reader["FullName"].ToString();
-
-                                MessageBox.Show("Giriş başarılı!");
-
-                                // Rolüne göre ilgili form açılır
-                                if (role == "Admin")
-                                {
-                                    AdminForm adminForm = new AdminForm();
-                                    this.Hide();
-                                    adminForm.ShowDialog();
-                                    this.Close();
-                                }
-                                else if (role == "Ev Sahibi")
-                                {
-                                    OwnerForm ownerForm = new OwnerForm(userId, fullName);
-                                    this.Hide();
-                                    ownerForm.ShowDialog();
-                                    this.Close();
-                                }
-                                else if (role == "Kiracı")
-                                {
-                                    KiraciForm kiraciForm = new KiraciForm(userId);
-                                    this.Hide();
-                                    kiraciForm.ShowDialog();
-                                    this.Close();
-                                }
-
-                            }
-                            else
-                            {
-                                // Kullanıcı bulunamazsa uyarı verilir
-                                MessageBox.Show("Geçersiz giriş. Hesabınız pasif olabilir veya bilgiler yanlış.");
-                            }
-                        }
-                    }
+                    MessageBox.Show("E-posta veya şifre hatalı ya da hesap pasif.");
+                    return;
                 }
-                catch (Exception ex)
+
+                
+
+                string normalized = user.Role.Replace(" ", "");
+                if (!Enum.TryParse<UserRole>(normalized, out var roleEnum))
                 {
-                    // Hata mesajı gösterilir
-                    MessageBox.Show("HATA: " + ex.Message);
+                    MessageBox.Show("Enum parse hatası: " + user.Role);
+                    return;
                 }
+
+                SessionContext.CurrentUserId = user.Id;
+                SessionContext.CurrentUserFullName = user.FullName;
+                SessionContext.CurrentUserRole = roleEnum;
+
+                this.Hide();
+                switch (roleEnum)
+                {
+                    case UserRole.Admin:
+                        
+                        using (var f = new AdminForm())
+                            f.ShowDialog();
+                        break;
+                    case UserRole.EvSahibi:
+                        using (var f = new OwnerForm(user.Id, user.FullName))
+                            f.ShowDialog();
+                        break;
+                    case UserRole.Kiraci:
+                        using (var f = new KiraciForm(user.Id))
+                            f.ShowDialog();
+                        break;
+                    default:
+                        MessageBox.Show("Yetkiniz olmayan bir rol.");
+                        break;
+                }
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                // Hatanın detayını mutlaka görün
+                MessageBox.Show("Giriş işlemi sırasında hata oluştu:\n" + ex.Message);
+                throw;
             }
         }
+
 
         private void LoginForm_Load(object sender, EventArgs e)
         {

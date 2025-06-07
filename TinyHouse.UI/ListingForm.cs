@@ -1,46 +1,45 @@
-﻿using System;
-using System.Data;
-using Microsoft.Data.SqlClient;
+﻿
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
+using TinyHouse.Business.Services;
+using TinyHouse.Data.Models;
 
 namespace TinyHouse.UI
 {
     public partial class ListingForm : Form
     {
-        private string connectionString = DbHelper.GetConnectionString();
+        private readonly HouseService _houseService;
 
         public ListingForm()
         {
             InitializeComponent();
+            _houseService = new HouseService();
         }
 
         private void ListingForm_Load(object sender, EventArgs e)
         {
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            try
             {
-                conn.Open();
-                string query = @"
-                    SELECT 
-                        t.Id,
-                        t.Title,
-                        t.Location,
-                        t.PricePerNight,
-                        u.FullName AS EvSahibi
-                    FROM TinyHouses t
-                    INNER JOIN Users u ON t.OwnerId = u.Id";
-
-                SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
-                DataTable dt = new DataTable();
-                adapter.Fill(dt);
-
-                dgvHouses.DataSource = dt;
+                List<HouseModel> houses = _houseService.GetAllHouses();
+                dgvHouses.DataSource = houses.Select(h => new
+                {
+                    h.Id,
+                    h.Title,
+                    h.Location,
+                    h.PricePerNight,
+                    EvSahibi = h.OwnerId
+                }).ToList();
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("İlanlar yüklenirken hata oluştu.");
             }
         }
 
         private void btnBack_Click(object sender, EventArgs e)
         {
-            AdminForm adminForm = new AdminForm();
-            adminForm.Show();
             this.Close();
         }
     }

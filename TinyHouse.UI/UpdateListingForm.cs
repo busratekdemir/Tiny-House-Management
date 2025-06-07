@@ -1,81 +1,140 @@
-﻿using System;
-using System.Data;
-using Microsoft.Data.SqlClient;
+﻿// TinyHouse.UI/UpdateListingForm.cs
+using System;
 using System.Windows.Forms;
+using TinyHouse.Business.Services;
+using TinyHouse.Data.Models;
+using TinyHouse.UI.Helpers;
 
 namespace TinyHouse.UI
 {
     public partial class UpdateListingForm : Form
     {
-        private int _ilanId;
-        private string _connectionString = DbHelper.GetConnectionString();
+        private readonly HouseService _houseService;
+        private readonly int _houseId;
 
-        public UpdateListingForm(int ilanId)
+        public UpdateListingForm(int houseId)
         {
             InitializeComponent();
-            _ilanId = ilanId;
+            _houseService = new HouseService();
+            _houseId = houseId;
+
+            // Event bağlamaları
+            this.Load += UpdateListingForm_Load;
+            btnUpdate.Click += btnUpdate_Click;
+            btnCancel.Click += btnCancel_Click;
         }
 
         private void UpdateListingForm_Load(object sender, EventArgs e)
         {
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            try
             {
-                conn.Open();
-                string query = "SELECT Title, Description, PricePerNight, Location FROM TinyHouses WHERE Id = @Id";
-
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@Id", _ilanId);
-
-                SqlDataReader reader = cmd.ExecuteReader();
-                if (reader.Read())
+                // 1) Mevcut ilanı çek
+                HouseModel house = _houseService.GetHouseById(_houseId);
+                if (house == null)
                 {
-                    txtTitle.Text = reader["Title"].ToString();
-                    txtDescription.Text = reader["Description"].ToString();
-                    nudPrice.Value = Convert.ToDecimal(reader["PricePerNight"]);
-                    txtLocation.Text = reader["Location"].ToString();
+                    MessageBox.Show("İlan bulunamadı.");
+                    Close();
+                    return;
                 }
+
+                // 2) Kontrolleri doldur
+                txtTitle.Text = house.Title;
+                txtDescription.Text = house.Description;
+                txtPhotoUrls.Text = house.PhotoUrls;
+                nudPrice.Value = house.PricePerNight;
+                txtLocation.Text = house.Location;
+                chbIsActive.Checked = house.IsActive;
+                dtpAvailableFrom.Value = house.AvailableFrom ?? DateTime.Today;
+                dtpAvailableTo.Value = house.AvailableTo ?? DateTime.Today;
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("İlan bilgileri yüklenirken hata oluştu.");
+                Close();
             }
         }
 
-        private void btnUpdate_Click_1(object sender, EventArgs e)
+        private void btnUpdate_Click(object sender, EventArgs e)
         {
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            try
             {
-                conn.Open();
-                string updateQuery = @"
-                    UPDATE TinyHouses
-                    SET Title = @Title,
-                        Description = @Description,
-                        PricePerNight = @Price,
-                        Location = @Location
-                    WHERE Id = @Id";
+                // 1) Alan validasyonları
+                string title = txtTitle.Text.Trim();
+                string desc = txtDescription.Text.Trim();
+                string photos = txtPhotoUrls.Text.Trim();
+                decimal price = nudPrice.Value;
+                string location = txtLocation.Text.Trim();
+                DateTime from = dtpAvailableFrom.Value.Date;
+                DateTime to = dtpAvailableTo.Value.Date;
+                bool isActive = chbIsActive.Checked;
 
-                SqlCommand cmd = new SqlCommand(updateQuery, conn);
-                cmd.Parameters.AddWithValue("@Title", txtTitle.Text);
-                cmd.Parameters.AddWithValue("@Description", txtDescription.Text);
-                cmd.Parameters.AddWithValue("@Price", nudPrice.Value);
-                cmd.Parameters.AddWithValue("@Location", txtLocation.Text);
-                cmd.Parameters.AddWithValue("@Id", _ilanId);
-
-                int result = cmd.ExecuteNonQuery();
-
-                if (result > 0)
+                if (string.IsNullOrWhiteSpace(title) ||
+                    string.IsNullOrWhiteSpace(location))
                 {
-                    MessageBox.Show("İlan güncellendi.");
-                    this.Close();
+                    MessageBox.Show("Lütfen başlık ve konum alanlarını doldurun.");
+                    return;
+                }
+                if (price <= 0)
+                {
+                    MessageBox.Show("Fiyat 0’dan büyük olmalı.");
+                    return;
+                }
+                if (to < from)
+                {
+                    MessageBox.Show("Bitiş tarihi, başlangıçtan büyük olmalı.");
+                    return;
+                }
+
+                // 2) Güncelleme modelini oluştur
+                var house = new HouseModel
+                {
+                    Id = _houseId,
+                    Title = title,
+                    Description = desc,
+                    PhotoUrls = photos,
+                    AvailableFrom = from,
+                    AvailableTo = to,
+                    IsActive = isActive,
+                    PricePerNight = price,
+                    Location = location,
+                    OwnerId = SessionContext.CurrentUserId
+                };
+
+                // 3) Service katmanına delege et
+                bool ok = _houseService.UpdateHouse(
+                    house.Id,
+                    house.Title,
+                    house.Description,
+                    house.PhotoUrls,
+                    house.AvailableFrom.Value,
+                    house.AvailableTo.Value,
+                    house.IsActive,
+                    house.PricePerNight,
+                    house.Location
+                );
+
+                // 4) Sonuç bildirimi
+                if (ok)
+                {
+                    MessageBox.Show("İlan başarıyla güncellendi.");
+                    Close();
                 }
                 else
                 {
-                    MessageBox.Show("Güncelleme başarısız.");
+                    MessageBox.Show("Güncelleme sırasında bir hata oluştu.");
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Beklenmeyen hata: " + ex.Message);
             }
         }
 
-        private void btnCancel_Click_1(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
+
+    
     }
 }
-
-

@@ -1,51 +1,55 @@
 ﻿using System;
-using System.Data;
-using Microsoft.Data.SqlClient;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
+using TinyHouse.Business.Services;
+using TinyHouse.Data.Models;
 
 namespace TinyHouse.UI
 {
     public partial class ManageReservationsForm : Form
     {
-        private string connectionString = DbHelper.GetConnectionString();
+        private readonly ReservationService _resService;
 
         public ManageReservationsForm()
         {
             InitializeComponent();
+            _resService = new ReservationService();
         }
 
         private void ManageReservationsForm_Load(object sender, EventArgs e)
         {
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            try
             {
-                conn.Open();
-                string query = @"
-                    SELECT 
-                        r.Id,
-                        u.FullName AS Kiraci,
-                        t.Title AS Ev,
-                        r.StartDate AS Baslangic,
-                        r.EndDate AS Bitis,
-                        r.TotalPrice
-                    FROM Reservations r
-                    INNER JOIN Users u ON r.UserId = u.Id
-                    INNER JOIN TinyHouses t ON r.TinyHouseId = t.Id";
+                List<ReservationModel> reservations = _resService.GetAllReservations();
+                var displayList = reservations.Select(r => new
+                {
+                    r.Id,
+                    Kiraci = r.UserId,
+                    EvId = r.TinyHouseId,
+                    Baslangic = r.StartDate,
+                    Bitis = r.EndDate,
+                    ToplamFiyat = r.TotalPrice,
+                    Durum = r.Status.ToString()
+                }).ToList();
 
-                SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
-                DataTable dt = new DataTable();
-                adapter.Fill(dt);
+                dgvReservations.DataSource = displayList;
 
-                dgvReservations.DataSource = dt;
+                if (!dgvReservations.Columns.Contains("Sil"))
+                {
+                    var silBtn = new DataGridViewButtonColumn
+                    {
+                        Name = "Sil",
+                        HeaderText = "Sil",
+                        Text = "Sil",
+                        UseColumnTextForButtonValue = true
+                    };
+                    dgvReservations.Columns.Add(silBtn);
+                }
             }
-
-            if (!dgvReservations.Columns.Contains("Sil"))
+            catch (Exception)
             {
-                DataGridViewButtonColumn silBtn = new DataGridViewButtonColumn();
-                silBtn.Name = "Sil";
-                silBtn.HeaderText = "Sil";
-                silBtn.Text = "Sil";
-                silBtn.UseColumnTextForButtonValue = true;
-                dgvReservations.Columns.Add(silBtn);
+                MessageBox.Show("Rezervasyonlar yüklenirken hata oluştu.");
             }
         }
 
@@ -53,29 +57,22 @@ namespace TinyHouse.UI
         {
             if (e.RowIndex >= 0 && dgvReservations.Columns[e.ColumnIndex].Name == "Sil")
             {
-                int reservationId = Convert.ToInt32(dgvReservations.Rows[e.RowIndex].Cells["Id"].Value);
-                DialogResult result = MessageBox.Show("Bu rezervasyonu silmek istediğinize emin misiniz?", "Onay", MessageBoxButtons.YesNo);
+                int resId = Convert.ToInt32(dgvReservations.Rows[e.RowIndex].Cells["Id"].Value);
+                var dr = MessageBox.Show(
+                    "Bu rezervasyonu silmek istediğinize emin misiniz?",
+                    "Onay", MessageBoxButtons.YesNo);
 
-                if (result == DialogResult.Yes)
+                if (dr == DialogResult.Yes)
                 {
-                    using (SqlConnection conn = new SqlConnection(connectionString))
+                    bool ok = _resService.CancelReservation(resId);
+                    if (ok)
                     {
-                        conn.Open();
-                        string deleteQuery = "DELETE FROM Reservations WHERE Id = @Id";
-
-                        SqlCommand cmd = new SqlCommand(deleteQuery, conn);
-                        cmd.Parameters.AddWithValue("@Id", reservationId);
-
-                        int affected = cmd.ExecuteNonQuery();
-                        if (affected > 0)
-                        {
-                            MessageBox.Show("Rezervasyon silindi.");
-                            ManageReservationsForm_Load(null, null);
-                        }
-                        else
-                        {
-                            MessageBox.Show("Silme işlemi başarısız.");
-                        }
+                        MessageBox.Show("Rezervasyon silindi.");
+                        ManageReservationsForm_Load(null, null);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Silme başarısız.");
                     }
                 }
             }
@@ -83,14 +80,7 @@ namespace TinyHouse.UI
 
         private void btnBack_Click(object sender, EventArgs e)
         {
-            AdminForm adminForm = new AdminForm();
-            adminForm.Show();
             this.Close();
-        }
-
-        private void dgvReservations_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
         }
     }
 }

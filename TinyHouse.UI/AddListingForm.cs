@@ -1,66 +1,82 @@
 ﻿using System;
-using Microsoft.Data.SqlClient;
 using System.Windows.Forms;
+using TinyHouse.Business.Services;
+using TinyHouse.UI.Helpers;
 
 namespace TinyHouse.UI
 {
     public partial class AddListingForm : Form
     {
-        private int ownerId;
-        private string connectionString = DbHelper.GetConnectionString();
+        private readonly int _ownerId;
+        private readonly HouseService _houseService;
 
         public AddListingForm(int ownerId)
         {
             InitializeComponent();
-            this.ownerId = ownerId;
+            _ownerId = ownerId;
+            _houseService = new HouseService();
         }
 
         private void btnAddListing_Click(object sender, EventArgs e)
         {
-            string title = txtTitle.Text;
-            string description = txtDescription.Text;
+            // 1) Alan validasyonları
+            string title = txtTitle.Text.Trim();
+            if (string.IsNullOrEmpty(title)) { MessageBox.Show("Başlık girin."); return; }
+
+            string desc = txtDescription.Text.Trim();
+            string photos = txtPhotoUrls.Text.Trim(); // Beklenen JSON dizisi
+
             decimal price = nudPrice.Value;
-            string location = txtLocation.Text;
+            if (price <= 0) { MessageBox.Show("Fiyat 0’dan büyük olmalı."); return; }
 
-            if (string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(location))
+            string loc = txtLocation.Text.Trim();
+            if (string.IsNullOrEmpty(loc)) { MessageBox.Show("Konum girin."); return; }
+
+            DateTime? from = dtpAvailableFrom.Checked
+                ? dtpAvailableFrom.Value.Date
+                : (DateTime?)null;
+            DateTime? to = dtpAvailableTo.Checked
+                ? dtpAvailableTo.Value.Date
+                : (DateTime?)null;
+
+            bool isActive = chbIsActive.Checked;
+
+            // 2) Service katmanına devret
+            try
             {
-                MessageBox.Show("Lütfen tüm alanları doldurun.");
-                return;
-            }
-            if (price <= 0)
-            {
-                MessageBox.Show("Fiyat 0'dan büyük olmalıdır.");
-                return;
-            }
+                int newId = _houseService.AddHouse(
+                    _ownerId,
+                    title,
+                    desc,
+                    photos,
+                    from,
+                    to,
+                    isActive,
+                    price,
+                    loc
+                );
 
-            using (SqlConnection conn = new SqlConnection(connectionString))
-            {
-                conn.Open();
-
-                string query = @"INSERT INTO TinyHouses (Title, Description, PricePerNight, Location, OwnerId)
-                                 VALUES (@Title, @Description, @PricePerNight, @Location, @OwnerId)";
-
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                if (newId > 0)
                 {
-                    cmd.Parameters.AddWithValue("@Title", title);
-                    cmd.Parameters.AddWithValue("@Description", description);
-                    cmd.Parameters.AddWithValue("@PricePerNight", price);
-                    cmd.Parameters.AddWithValue("@Location", location);
-                    cmd.Parameters.AddWithValue("@OwnerId", ownerId);
-
-                    cmd.ExecuteNonQuery();
+                    MessageBox.Show("İlan başarıyla eklendi!");
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("İlan eklenirken bir hata oluştu.");
                 }
             }
-
-            MessageBox.Show("İlan başarıyla eklendi.");
-            this.Close();
+            catch (Exception ex)
+            {
+                MessageBox.Show("Beklenmeyen hata: " + ex.Message);
+            }
         }
+
 
         private void btnBack_Click_1(object sender, EventArgs e)
         {
             this.Close();
-        }
 
+        }
     }
 }
-
