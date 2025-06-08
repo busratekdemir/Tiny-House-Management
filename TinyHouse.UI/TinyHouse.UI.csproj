@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="LiveCharts.WinForms" Version="0.9.7.1" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
     <PackageReference Include="System.Text.Json" Version="9.0.5" />
@@ -16,7 +17,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TinyHouse.Business\TinyHouse.Business.csproj" />
-    <ProjectReference Include="..\TinyHouse.Data\TinyHouse.Data.csproj" />
   </ItemGroup>
 
 </Project>

@@ -13,135 +13,120 @@ namespace TinyHouse.UI
     {
         private readonly ReservationService _resService;
         private readonly HouseService _houseService;
+        private readonly ReviewService _reviewService;
+
+        private HouseModel _selectedHouse = null;
 
         public KiraciForm(int userId)
         {
             InitializeComponent();
+
             _resService = new ReservationService();
             _houseService = new HouseService();
+            _reviewService = new ReviewService();
+
             SessionContext.CurrentUserId = userId;
 
-            Load += OnLoad;
-            dgvHouses.SelectionChanged += OnHouseSelectionChanged;
-            btnReserve.Click += OnReserveClick;
-            dgvMyReservations.CellContentClick += OnReservationCancel;
-            tabControl1.SelectedIndexChanged += OnTabChanged;
+            Load += KiraciForm_Load;
+            btnFilter.Click += (_, __) => ReloadHouses();
+            btnSelectHouse.Click += btnSelectHouse_Click; // İlan Seç tuşu
+            btnInspect.Click += btnInspect_Click;
             btnLogout.Click += (_, __) => Close();
+            // Diğer eventleri ihtiyaca göre ekle (yorum, rezervasyon vs.)
         }
 
-        private void OnLoad(object sender, EventArgs e)
+        private void KiraciForm_Load(object sender, EventArgs e)
         {
-            dgvHouses.DataSource = _houseService.GetAllHouses();
-            HidePhotoPanel();
-            ReloadReservations();
+            ReloadHouses();
         }
 
-        private void OnHouseSelectionChanged(object sender, EventArgs e)
+        private void ReloadHouses()
         {
-            if (dgvHouses.CurrentRow == null)
-            {
-                HidePhotoPanel();
-                return;
-            }
-
-            int id = Convert.ToInt32(dgvHouses.CurrentRow.Cells["Id"].Value);
-            var house = _houseService.GetHouseById(id);
-            if (house == null || string.IsNullOrWhiteSpace(house.PhotoUrls))
-            {
-                HidePhotoPanel();
-                return;
-            }
-
-            List<string> urls;
-            try
-            {
-                urls = JsonSerializer.Deserialize<List<string>>(house.PhotoUrls) ?? new List<string>();
-            }
-            catch
-            {
-                urls = new List<string>();
-            }
-
+            var from = dtpFrom.Value.Date;
+            var to = dtpTo.Value.Date;
+            dgvHouses.DataSource = _houseService.GetAvailableHouses(from, to);
+            HideColumns(dgvHouses, "PhotoUrls", "AvailableFrom", "AvailableTo", "IsActive");
             flpPhotos.Controls.Clear();
-            foreach (var url in urls)
-            {
-                var pic = new PictureBox
-                {
-                    Width = 120,
-                    Height = 90,
-                    SizeMode = PictureBoxSizeMode.Zoom,
-                    Margin = new Padding(5),
-                    ImageLocation = url,
-                    BorderStyle = BorderStyle.FixedSingle
-                };
-                flpPhotos.Controls.Add(pic);
-            }
-            flpPhotos.Visible = urls.Count > 0;
+            _selectedHouse = null; // Yeni filtrede eski seçimi temizle
         }
 
-        private void HidePhotoPanel()
+        private void btnSelectHouse_Click(object sender, EventArgs e)
+        {
+            if (dgvHouses.CurrentRow?.DataBoundItem is HouseModel house)
+            {
+                _selectedHouse = house;
+                ShowInfo($"Seçili ilan: {house.Title}");
+                DisplaySelectedHousePhotos(house);
+            }
+            else
+            {
+                ShowWarning("Lütfen önce bir ilan satırı seçin.");
+            }
+        }
+
+        private void DisplaySelectedHousePhotos(HouseModel h)
         {
             flpPhotos.Controls.Clear();
-            flpPhotos.Visible = false;
-        }
-
-        private void OnReserveClick(object sender, EventArgs e)
-        {
-            if (dgvHouses.CurrentRow == null)
-                return;
-
-            int id = Convert.ToInt32(dgvHouses.CurrentRow.Cells["Id"].Value);
-            DateTime start = dtpStart.Value.Date;
-            DateTime end = dtpEnd.Value.Date;
-            int days = (end - start).Days;
-            if (days <= 0)
+            if (!string.IsNullOrWhiteSpace(h.PhotoUrls))
             {
-                MessageBox.Show("Bitiş tarihi başlangıçtan sonra olmalı.");
-                return;
-            }
-
-            decimal price = Convert.ToDecimal(dgvHouses.CurrentRow.Cells["PricePerNight"].Value);
-            bool success = _resService.AddReservation(SessionContext.CurrentUserId, id, start, end, price * days);
-
-            MessageBox.Show(success ? "Talebin iletildi (onay bekliyor)." : "Bu tarihler dolu!");
-            if (success) ReloadReservations();
-        }
-
-        private void ReloadReservations()
-        {
-            var data = _resService.GetReservationsByUser(SessionContext.CurrentUserId);
-            dgvMyReservations.DataSource = data;
-
-            if (!dgvMyReservations.Columns.Contains("btnCancel"))
-            {
-                dgvMyReservations.Columns.Add(new DataGridViewButtonColumn
+                List<string> imgs = new();
+                try
                 {
-                    Name = "btnCancel",
-                    HeaderText = "İptal Et",
-                    Text = "İptal Et",
-                    UseColumnTextForButtonValue = true
-                });
+                    imgs = JsonSerializer.Deserialize<List<string>>(h.PhotoUrls) ?? new List<string>();
+                }
+                catch (JsonException)
+                {
+                    // Eğer tek bir URL ise, onu da ekle
+                    imgs.Add(h.PhotoUrls);
+                }
+                foreach (var url in imgs)
+                {
+                    flpPhotos.Controls.Add(new PictureBox
+                    {
+                        Width = 120,
+                        Height = 90,
+                        SizeMode = PictureBoxSizeMode.Zoom,
+                        Margin = new Padding(5),
+                        ImageLocation = url,
+                        BorderStyle = BorderStyle.FixedSingle
+                    });
+                }
+                flpPhotos.Visible = imgs.Count > 0;
             }
-
-            if (dgvMyReservations.Columns.Contains("Id"))
-                dgvMyReservations.Columns["Id"].Visible = false;
+            else flpPhotos.Visible = false;
         }
 
-        private void OnReservationCancel(object sender, DataGridViewCellEventArgs e)
+        private void btnInspect_Click(object sender, EventArgs e)
         {
-            if (e.RowIndex < 0 || dgvMyReservations.Columns[e.ColumnIndex].Name != "btnCancel")
+            if (_selectedHouse == null)
+            {
+                ShowWarning("Lütfen önce 'İlan Seç' butonuna tıklayarak bir ilan seçin.");
                 return;
-
-            int resId = Convert.ToInt32(dgvMyReservations.Rows[e.RowIndex].Cells["Id"].Value);
-            bool done = _resService.CancelReservation(resId);
-            MessageBox.Show(done ? "Rezervasyon iptal edildi." : "İptal işlemi başarısız.");
-            if (done) ReloadReservations();
+            }
+            using var reviewForm = new ReviewForm(_selectedHouse.Id);
+            reviewForm.ShowDialog();
         }
 
-        private void OnTabChanged(object sender, EventArgs e)
+        private void HideColumns(DataGridView grid, params string[] cols)
         {
-            if (tabControl1.SelectedTab.Text == "Rezervasyonlarım")
-                ReloadReservations();
+            foreach (var col in cols)
+                if (grid.Columns.Contains(col))
+                    grid.Columns[col].Visible = false;
         }
+
+        private void ShowInfo(string msg)
+            => MessageBox.Show(msg, "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+        private void ShowWarning(string msg)
+            => MessageBox.Show(msg, "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+        private void panel2_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+ 
+
+        // Diğer fonksiyonlar (yorum ekleme, rezervasyon...) da benzer şekilde seçili _selectedHouse ile ilerlemeli.
     }
 }

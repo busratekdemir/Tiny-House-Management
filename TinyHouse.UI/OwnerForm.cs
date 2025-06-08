@@ -28,8 +28,7 @@ namespace TinyHouse.UI
             btnUpdate.Click += btnUpdate_Click;
             dgvMyHouses.CellContentClick += dgvMyHouses_CellClick;
             btnShowIncome.Click += btnShowIncome_Click;
-            btnLogout.Click += btnLogout_Click;
-            dgvRequests.CellContentClick += dgvRequests_CellClick;
+            
             tabControlOwner.SelectedIndexChanged += tabControlOwner_SelectedIndexChanged;
         }
 
@@ -44,7 +43,7 @@ namespace TinyHouse.UI
 
             lblTitle.Text = $"Hoş geldiniz, {_ownerName}!";
             LoadMyHouses();
-            LoadRequests();
+            
         }
 
         private void LoadMyHouses()
@@ -97,24 +96,32 @@ namespace TinyHouse.UI
             LoadMyHouses();
         }
 
+        // TEK, temizlenmiş, doğrusu bu fonksiyon olacak:
         private void dgvMyHouses_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0 || dgvMyHouses.Columns[e.ColumnIndex].Name != "Sil")
                 return;
 
             int houseId = Convert.ToInt32(dgvMyHouses.Rows[e.RowIndex].Cells["Id"].Value);
-            var confirmation = MessageBox.Show(
-                "Bu ilanı silmek istediğinize emin misiniz?", "Onay", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (confirmation != DialogResult.Yes)
-                return;
 
-            bool ok = _houseService.DeleteHouse(houseId);
-            if (!ok)
+            if (_houseService.HasActiveReservations(houseId))
             {
                 MessageBox.Show(
                     "Bu ilanı silemezsiniz. Önce bu ilana ait tüm aktif rezervasyonları iptal etmelisiniz.",
                     "Silme Hatası", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
+
+            var confirmation = MessageBox.Show(
+                "Bu ilanı silmek istediğinize emin misiniz?", "Onay", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (confirmation != DialogResult.Yes)
+                return;
+
+            bool ok = _houseService.DeleteHouse(houseId);
+
+            if (!ok)
+                MessageBox.Show("İlan silinirken beklenmedik bir hata oluştu.", "Silme Hatası", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             else
             {
                 MessageBox.Show("İlan başarıyla silindi.");
@@ -143,8 +150,8 @@ namespace TinyHouse.UI
                     .Select(r => new
                     {
                         r.Id,
-                        r.TenantName,
-                        r.HouseTitle,
+                        KiraciAdi = r.TenantName,
+                        IlanBasligi = r.HouseTitle,
                         r.StartDate,
                         r.EndDate,
                         r.TotalPrice
@@ -170,13 +177,18 @@ namespace TinyHouse.UI
                         UseColumnTextForButtonValue = true
                     });
                 }
-
                 if (dgvRequests.Columns.Contains("Id"))
                     dgvRequests.Columns["Id"].Visible = false;
             }
-            catch (Exception)
+            catch (Exception ex)            // ← burada ex’i tanımlıyoruz
             {
-                MessageBox.Show("Talepler yüklenirken hata oluştu.");
+                MessageBox.Show(
+                    "Talepler yüklenirken hata oluştu:\n" +
+                    ex.GetType().Name + ": " + ex.Message,
+                    "Hata",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
             }
         }
 
@@ -205,9 +217,11 @@ namespace TinyHouse.UI
         {
             if (tabControlOwner.SelectedTab.Text == "İlanlarım") LoadMyHouses();
             else if (tabControlOwner.SelectedTab.Text == "Talepler") LoadRequests();
+            LoadRequests();
         }
 
-        private void btnLogout_Click(object sender, EventArgs e)
+
+        private void btn_logOut_Click(object sender, EventArgs e)
         {
             new LoginForm().Show();
             Close();

@@ -8,98 +8,63 @@ namespace TinyHouse.Business.Services
 {
     public class HouseService
     {
-        private readonly HouseRepository _repo;
+        private readonly HouseRepository _houseRepo;
+        private readonly ReservationRepository _reservationRepo;
 
+        // Tek ve temiz constructor
         public HouseService()
         {
-            // Bağlantı dizesini çekip repository'i başlatıyoruz
             var connStr = DbHelper.GetConnectionString();
-            _repo = new HouseRepository(connStr);
+            _houseRepo = new HouseRepository(connStr);
+            _reservationRepo = new ReservationRepository(connStr);
         }
 
-        /// <summary>
-        /// Yeni bir ilan ekler.
-        /// </summary>
-        public int AddHouse(
-            int ownerId,
-            string title,
-            string description,
-            string photoUrls,
-            DateTime? availableFrom,
-            DateTime? availableTo,
-            bool isActive,
-            decimal pricePerNight,
-            string location)
+        public IEnumerable<HouseModel> GetAllHouses()
+            => _houseRepo.GetAll();
+
+        public HouseModel GetHouseById(int houseId)
+            => _houseRepo.GetById(houseId);
+
+        public int AddHouse(HouseModel house)
+            => _houseRepo.Add(house);
+
+        public bool UpdateHouse(HouseModel house)
+            => _houseRepo.Update(house);
+
+        public bool DeleteHouse(int houseId)
         {
-            var h = new HouseModel
+            if (!_reservationRepo.HasActiveReservations(houseId))
+                return _houseRepo.Delete(houseId);
+
+            return false; // Aktif rezervasyon var, silme!
+        }
+
+        public IEnumerable<HouseModel> GetHousesByOwner(int ownerId)
+            => _houseRepo.GetByOwner(ownerId);
+
+        public IEnumerable<HouseModel> GetAvailableHouses(DateTime from, DateTime to)
+            => _houseRepo.GetAvailableHouses(from, to);
+
+        public bool HasActiveReservations(int houseId)
+            => _reservationRepo.HasActiveReservations(houseId);
+
+        // Bu metot henüz implement edilmediği için hata vermeye devam edebilir.
+        public int AddHouse(int ownerId, string title, string desc, string photos, DateTime? from, DateTime? to, bool isActive, decimal price, string loc)
+        {
+            var house = new HouseModel
             {
                 OwnerId = ownerId,
                 Title = title,
-                Description = description,
-                PhotoUrls = photoUrls,
-                AvailableFrom = availableFrom,
-                AvailableTo = availableTo,
+                Description = desc,
+                PhotoUrls = photos,
+                AvailableFrom = from,
+                AvailableTo = to,
                 IsActive = isActive,
-                PricePerNight = pricePerNight,
-                Location = location
+                PricePerNight = price,
+                Location = loc
             };
-            return _repo.Add(h);
+
+            return _houseRepo.Add(house);
         }
-
-        /// <summary>
-        /// Mevcut bir ilanı günceller. (9 parametreli overload)
-        /// </summary>
-        public bool UpdateHouse(
-            int id,
-            string title,
-            string description,
-            string photoUrls,
-            DateTime? availableFrom,
-            DateTime? availableTo,
-            bool isActive,
-            decimal pricePerNight,
-            string location)
-        {
-            var h = new HouseModel
-            {
-                Id = id,
-                Title = title,
-                Description = description,
-                PhotoUrls = photoUrls,
-                AvailableFrom = availableFrom,
-                AvailableTo = availableTo,
-                IsActive = isActive,
-                PricePerNight = pricePerNight,
-                Location = location
-            };
-            return _repo.Update(h);
-        }
-
-        /// <summary>
-        /// Sahibe özel silme: sadece kendi ilanını silebilir.
-        /// </summary>
-        public bool DeleteHouse(int houseId)
-        {
-            return _repo.Delete(houseId);
-        }
-
-
-        /// <summary>
-        /// Tek bir ilanın detaylarını getirir.
-        /// </summary>
-        public HouseModel GetHouseById(int id) =>
-            _repo.GetById(id);
-
-        /// <summary>
-        /// Tüm aktif/pasif fark etmeksizin ilanları getirir.
-        /// </summary>
-        public List<HouseModel> GetAllHouses() =>
-            _repo.GetAll();
-
-        /// <summary>
-        /// Belirli bir sahibin ilanlarını getirir.
-        /// </summary>
-        public List<HouseModel> GetHousesByOwner(int ownerId) =>
-            _repo.GetByOwner(ownerId);
     }
 }

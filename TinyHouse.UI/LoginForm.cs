@@ -43,6 +43,7 @@ namespace TinyHouse.UI
             string email = txtEmail.Text.Trim();
             string password = txtPassword.Text.Trim();
 
+            // 0) Basit validasyon
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
             {
                 MessageBox.Show("Lütfen e-posta ve şifre girin.");
@@ -56,6 +57,7 @@ namespace TinyHouse.UI
 
             try
             {
+                // 1) Kullanıcıyı doğrula
                 var user = _authService.Authenticate(email, password);
                 if (user == null)
                 {
@@ -63,48 +65,55 @@ namespace TinyHouse.UI
                     return;
                 }
 
-                
-
-                string normalized = user.Role.Replace(" ", "");
-                if (!Enum.TryParse<UserRole>(normalized, out var roleEnum))
+                // 2) Rol enum’unu çöz
+                if (!Enum.TryParse(user.Role.Replace(" ", ""), out UserRole roleEnum))
                 {
-                    MessageBox.Show("Enum parse hatası: " + user.Role);
+                    MessageBox.Show("Yetkisiz rol: " + user.Role);
                     return;
                 }
 
+                // 3) Oturum bilgilerini kaydet
                 SessionContext.CurrentUserId = user.Id;
                 SessionContext.CurrentUserFullName = user.FullName;
                 SessionContext.CurrentUserRole = roleEnum;
 
+                // 4) LoginForm’u gizle, rol formunu aç
                 this.Hide();
-                switch (roleEnum)
+
+                Form roleForm = roleEnum switch
                 {
-                    case UserRole.Admin:
-                        
-                        using (var f = new AdminForm())
-                            f.ShowDialog();
-                        break;
-                    case UserRole.EvSahibi:
-                        using (var f = new OwnerForm(user.Id, user.FullName))
-                            f.ShowDialog();
-                        break;
-                    case UserRole.Kiraci:
-                        using (var f = new KiraciForm(user.Id))
-                            f.ShowDialog();
-                        break;
-                    default:
-                        MessageBox.Show("Yetkiniz olmayan bir rol.");
-                        break;
+                    UserRole.Admin => new AdminForm(),
+                    UserRole.EvSahibi => new OwnerForm(user.Id, user.FullName),
+                    UserRole.Kiraci => new KiraciForm(user.Id),
+                    _ => null
+                };
+
+                if (roleForm == null)
+                {
+                    MessageBox.Show("Yetkiniz olmayan bir rol.");
+                    this.Show();                 // geri aç, kullanıcıya form kalsın
+                    return;
                 }
-                this.Close();
+
+                // Kiracı formunu modeless aç; diğerlerini modal tut
+                if (roleEnum == UserRole.Kiraci)
+                {
+                    roleForm.FormClosed += (_, __) => this.Close();   // KiraciForm kapanınca uygulama kapansın
+                    roleForm.Show();                                  // modeless
+                }
+                else
+                {
+                    roleForm.ShowDialog();                            // modal
+                    this.Close();                                     // dialog kapandıktan sonra uygulamayı kapat
+                }
             }
             catch (Exception ex)
             {
-                // Hatanın detayını mutlaka görün
-                MessageBox.Show("Giriş işlemi sırasında hata oluştu:\n" + ex.Message);
-                throw;
+                MessageBox.Show("Giriş işlemi sırasında hata oluştu:\n" + ex.Message,
+                                "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
 
 
         private void LoginForm_Load(object sender, EventArgs e)

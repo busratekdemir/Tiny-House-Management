@@ -25,6 +25,9 @@
     <Compile Update="RegisterForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="ReviewForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="UpdateListingForm.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -1,0 +1,16 @@
+﻿USE TinyHouseDB;
+GO
+
+CREATE TABLE dbo.Reviews (
+  Id INT IDENTITY(1,1) PRIMARY KEY,
+  HouseId INT NOT NULL,
+  UserId INT NOT NULL,
+  Rating INT NOT NULL CHECK (Rating BETWEEN 1 AND 5),
+  Text NVARCHAR(MAX) NULL,
+  CreatedAt DATETIME NOT NULL DEFAULT GETDATE(),
+  CONSTRAINT FK_Reviews_House FOREIGN KEY (HouseId)
+    REFERENCES dbo.TinyHouses(Id),
+  CONSTRAINT FK_Reviews_User FOREIGN KEY (UserId)
+    REFERENCES dbo.Users(Id)
+);
+

@@ -25,6 +25,7 @@ namespace TinyHouse.Data.Models
         public ReservationStatus Status { get; set; }
         public string TenantName { get; set; }
         public string HouseTitle { get; set; }
+        public int HouseId { get; set; }
     }
 }
 

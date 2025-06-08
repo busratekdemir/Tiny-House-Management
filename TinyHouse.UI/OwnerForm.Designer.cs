@@ -90,7 +90,6 @@
             btnLogout.TabIndex = 5;
             btnLogout.Text = "Çıkış yap";
             btnLogout.UseVisualStyleBackColor = false;
-            btnLogout.Click += btnLogout_Click;
             // 
             // btnUpdate
             // 
@@ -163,6 +162,7 @@
             btn_logOut.TabIndex = 2;
             btn_logOut.Text = "Çıkış";
             btn_logOut.UseVisualStyleBackColor = false;
+            btn_logOut.Click += btn_logOut_Click;
             // 
             // label1
             // 
@@ -185,7 +185,6 @@
             dgvRequests.RowHeadersWidth = 51;
             dgvRequests.Size = new Size(945, 370);
             dgvRequests.TabIndex = 0;
-            dgvRequests.CellClick += dgvRequests_CellClick;
             // 
             // OwnerForm
             // 

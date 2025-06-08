@@ -22,7 +22,7 @@ namespace TinyHouse.UI
         {
             try
             {
-                List<HouseModel> houses = _houseService.GetAllHouses();
+                List<HouseModel> houses = (List<HouseModel>)_houseService.GetAllHouses();
                 dgvHouses.DataSource = houses.Select(h => new
                 {
                     h.Id,

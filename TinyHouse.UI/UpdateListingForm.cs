@@ -18,8 +18,7 @@ namespace TinyHouse.UI
             _houseService = new HouseService();
             _houseId = houseId;
 
-            // Event bağlamaları
-            this.Load += UpdateListingForm_Load;
+            Load += UpdateListingForm_Load;
             btnUpdate.Click += btnUpdate_Click;
             btnCancel.Click += btnCancel_Click;
         }
@@ -28,7 +27,6 @@ namespace TinyHouse.UI
         {
             try
             {
-                // 1) Mevcut ilanı çek
                 HouseModel house = _houseService.GetHouseById(_houseId);
                 if (house == null)
                 {
@@ -37,7 +35,6 @@ namespace TinyHouse.UI
                     return;
                 }
 
-                // 2) Kontrolleri doldur
                 txtTitle.Text = house.Title;
                 txtDescription.Text = house.Description;
                 txtPhotoUrls.Text = house.PhotoUrls;
@@ -47,9 +44,9 @@ namespace TinyHouse.UI
                 dtpAvailableFrom.Value = house.AvailableFrom ?? DateTime.Today;
                 dtpAvailableTo.Value = house.AvailableTo ?? DateTime.Today;
             }
-            catch (Exception)
+            catch
             {
-                MessageBox.Show("İlan bilgileri yüklenirken hata oluştu.");
+                MessageBox.Show("İlan yüklenirken hata oluştu.");
                 Close();
             }
         }
@@ -58,34 +55,31 @@ namespace TinyHouse.UI
         {
             try
             {
-                // 1) Alan validasyonları
                 string title = txtTitle.Text.Trim();
                 string desc = txtDescription.Text.Trim();
                 string photos = txtPhotoUrls.Text.Trim();
-                decimal price = nudPrice.Value;
                 string location = txtLocation.Text.Trim();
+                decimal price = nudPrice.Value;
                 DateTime from = dtpAvailableFrom.Value.Date;
                 DateTime to = dtpAvailableTo.Value.Date;
                 bool isActive = chbIsActive.Checked;
 
-                if (string.IsNullOrWhiteSpace(title) ||
-                    string.IsNullOrWhiteSpace(location))
+                if (string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(location))
                 {
-                    MessageBox.Show("Lütfen başlık ve konum alanlarını doldurun.");
+                    MessageBox.Show("Başlık ve konum boş olamaz.");
                     return;
                 }
                 if (price <= 0)
                 {
-                    MessageBox.Show("Fiyat 0’dan büyük olmalı.");
+                    MessageBox.Show("Fiyat 0'dan büyük olmalı.");
                     return;
                 }
                 if (to < from)
                 {
-                    MessageBox.Show("Bitiş tarihi, başlangıçtan büyük olmalı.");
+                    MessageBox.Show("Bitiş tarihi başlangıçtan önce olamaz.");
                     return;
                 }
 
-                // 2) Güncelleme modelini oluştur
                 var house = new HouseModel
                 {
                     Id = _houseId,
@@ -100,20 +94,8 @@ namespace TinyHouse.UI
                     OwnerId = SessionContext.CurrentUserId
                 };
 
-                // 3) Service katmanına delege et
-                bool ok = _houseService.UpdateHouse(
-                    house.Id,
-                    house.Title,
-                    house.Description,
-                    house.PhotoUrls,
-                    house.AvailableFrom.Value,
-                    house.AvailableTo.Value,
-                    house.IsActive,
-                    house.PricePerNight,
-                    house.Location
-                );
+                bool ok = _houseService.UpdateHouse(house);
 
-                // 4) Sonuç bildirimi
                 if (ok)
                 {
                     MessageBox.Show("İlan başarıyla güncellendi.");
@@ -126,7 +108,7 @@ namespace TinyHouse.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Beklenmeyen hata: " + ex.Message);
+                MessageBox.Show($"Beklenmeyen hata: {ex.Message}");
             }
         }
 
@@ -134,7 +116,5 @@ namespace TinyHouse.UI
         {
             Close();
         }
-
-    
     }
 }
