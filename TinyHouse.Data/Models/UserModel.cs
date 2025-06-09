@@ -15,5 +15,7 @@ namespace TinyHouse.Data.Models
         public string PasswordHash { get; set; } // Şifre hash’li olarak saklanacak
         public string Role { get; set; }
         public bool IsActive { get; set; }
+   
+          
     }
 }

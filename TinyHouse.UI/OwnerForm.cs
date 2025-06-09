@@ -30,6 +30,10 @@ namespace TinyHouse.UI
             btnShowIncome.Click += btnShowIncome_Click;
             
             tabControlOwner.SelectedIndexChanged += tabControlOwner_SelectedIndexChanged;
+            dgvRequests.CellClick += dgvRequests_CellClick;
+
+
+
         }
 
         private void OwnerForm_Load(object sender, EventArgs e)
@@ -215,8 +219,10 @@ namespace TinyHouse.UI
 
         private void tabControlOwner_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (tabControlOwner.SelectedTab.Text == "İlanlarım") LoadMyHouses();
-            else if (tabControlOwner.SelectedTab.Text == "Talepler") LoadRequests();
+            if (tabControlOwner.SelectedTab.Text == "İlanlarım")
+                LoadMyHouses();
+            
+            else if (tabControlOwner.SelectedTab.Text == "Talepler")
             LoadRequests();
         }
 

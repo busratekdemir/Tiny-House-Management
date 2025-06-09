@@ -18,5 +18,6 @@ namespace TinyHouse.Data.Models
         public decimal PricePerNight { get; set; }
         public string Location { get; set; }
         public int OwnerId { get; set; }
+        public string OwnerName { get; set; } // join ile çekecez
     }
 }

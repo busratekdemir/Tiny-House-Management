@@ -91,11 +91,11 @@ namespace TinyHouse.UI
                 if (roleForm == null)
                 {
                     MessageBox.Show("Yetkiniz olmayan bir rol.");
-                    this.Show();                 // geri aç, kullanıcıya form kalsın
+                    this.Show();                 // geri aç, kullanıcıya form dönsün
                     return;
                 }
 
-                // Kiracı formunu modeless aç; diğerlerini modal tut
+                // Kiracı formunu modeless, diğerlerini modal 
                 if (roleEnum == UserRole.Kiraci)
                 {
                     roleForm.FormClosed += (_, __) => this.Close();   // KiraciForm kapanınca uygulama kapansın

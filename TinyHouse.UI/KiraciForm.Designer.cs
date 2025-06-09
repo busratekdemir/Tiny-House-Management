@@ -200,7 +200,6 @@ namespace TinyHouse.UI
             panel2.Name = "panel2";
             panel2.Size = new Size(264, 133);
             panel2.TabIndex = 5;
-            panel2.Paint += panel2_Paint;
             // 
             // dtpTo
             // 

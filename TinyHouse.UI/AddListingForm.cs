@@ -1,7 +1,8 @@
-﻿using System;
+﻿// AddListingForm.cs
+using System;
 using System.Windows.Forms;
 using TinyHouse.Business.Services;
-using TinyHouse.UI.Helpers;
+using TinyHouse.UI.Helpers;  // Eğer SessionContext vb. burada tanımlıysa
 
 namespace TinyHouse.UI
 {
@@ -15,22 +16,38 @@ namespace TinyHouse.UI
             InitializeComponent();
             _ownerId = ownerId;
             _houseService = new HouseService();
+
+            // Buton event’lerini bağla
+            btnAddListing.Click += BtnAddListing_Click;
+            btnBack.Click += BtnBack_Click;
         }
 
-        private void btnAddListing_Click(object sender, EventArgs e)
+        private void BtnAddListing_Click(object sender, EventArgs e)
         {
-            // 1) Alan validasyonları
-            string title = txtTitle.Text.Trim();
-            if (string.IsNullOrEmpty(title)) { MessageBox.Show("Başlık girin."); return; }
+            // 1) Validasyon
+            var title = txtTitle.Text.Trim();
+            if (string.IsNullOrEmpty(title))
+            {
+                MessageBox.Show("Lütfen ilan başlığı girin.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
-            string desc = txtDescription.Text.Trim();
-            string photos = txtPhotoUrls.Text.Trim(); // Beklenen JSON dizisi
+            var desc = txtDescription.Text.Trim();
+            var photos = txtPhotoUrls.Text.Trim();
 
-            decimal price = nudPrice.Value;
-            if (price <= 0) { MessageBox.Show("Fiyat 0’dan büyük olmalı."); return; }
+            var price = nudPrice.Value;
+            if (price <= 0)
+            {
+                MessageBox.Show("Gecelik fiyat 0'dan büyük olmalı.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
-            string loc = txtLocation.Text.Trim();
-            if (string.IsNullOrEmpty(loc)) { MessageBox.Show("Konum girin."); return; }
+            var loc = txtLocation.Text.Trim();
+            if (string.IsNullOrEmpty(loc))
+            {
+                MessageBox.Show("Lütfen konum girin.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
             DateTime? from = dtpAvailableFrom.Checked
                 ? dtpAvailableFrom.Value.Date
@@ -39,9 +56,15 @@ namespace TinyHouse.UI
                 ? dtpAvailableTo.Value.Date
                 : (DateTime?)null;
 
-            bool isActive = chbIsActive.Checked;
+            if (from.HasValue && to.HasValue && to < from)
+            {
+                MessageBox.Show("Bitiş tarihi başlangıç tarihinden önce olamaz.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
-            // 2) Service katmanına devret
+            var isActive = chbIsActive.Checked;
+
+            // 2) Servis çağrısı
             try
             {
                 int newId = _houseService.AddHouse(
@@ -58,25 +81,25 @@ namespace TinyHouse.UI
 
                 if (newId > 0)
                 {
-                    MessageBox.Show("İlan başarıyla eklendi!");
+                    MessageBox.Show("İlan başarıyla eklendi.", "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.DialogResult = DialogResult.OK;
                     this.Close();
                 }
                 else
                 {
-                    MessageBox.Show("İlan eklenirken bir hata oluştu.");
+                    MessageBox.Show("İlan eklenirken bir sorun oluştu.", "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Beklenmeyen hata: " + ex.Message);
+                MessageBox.Show($"Beklenmeyen hata: {ex.Message}", "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-
-        private void btnBack_Click_1(object sender, EventArgs e)
+        private void BtnBack_Click(object sender, EventArgs e)
         {
+            this.DialogResult = DialogResult.Cancel;
             this.Close();
-
         }
     }
 }

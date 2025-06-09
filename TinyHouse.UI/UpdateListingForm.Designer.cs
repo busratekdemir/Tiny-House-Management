@@ -39,7 +39,7 @@
             nudPrice = new NumericUpDown();
             txtLocation = new TextBox();
             label5 = new Label();
-            txtPhotoUrls = new Label();
+            lblphotourl = new Label();
             label7 = new Label();
             txtPhotoUrls_ = new TextBox();
             dtpAvailableFrom = new DateTimePicker();
@@ -112,7 +112,6 @@
             btnCancel.TabIndex = 6;
             btnCancel.Text = "İptal";
             btnCancel.UseVisualStyleBackColor = false;
-            btnCancel.Click += btnCancel_Click;
             // 
             // btnUpdate
             // 
@@ -123,7 +122,6 @@
             btnUpdate.TabIndex = 7;
             btnUpdate.Text = "Güncelle";
             btnUpdate.UseVisualStyleBackColor = false;
-            btnUpdate.Click += btnUpdate_Click;
             // 
             // nudPrice
             // 
@@ -150,15 +148,15 @@
             label5.TabIndex = 10;
             label5.Text = "Geçerlilik bitişi :";
             // 
-            // txtPhotoUrls
+            // lblphotourl
             // 
-            txtPhotoUrls.AutoSize = true;
-            txtPhotoUrls.BackColor = Color.Thistle;
-            txtPhotoUrls.Location = new Point(21, 241);
-            txtPhotoUrls.Name = "txtPhotoUrls";
-            txtPhotoUrls.Size = new Size(172, 20);
-            txtPhotoUrls.TabIndex = 11;
-            txtPhotoUrls.Text = "Fotoğraf URL'leri(JSON) :";
+            lblphotourl.AutoSize = true;
+            lblphotourl.BackColor = Color.Thistle;
+            lblphotourl.Location = new Point(21, 241);
+            lblphotourl.Name = "lblphotourl";
+            lblphotourl.Size = new Size(172, 20);
+            lblphotourl.TabIndex = 11;
+            lblphotourl.Text = "Fotoğraf URL'leri(JSON) :";
             // 
             // label7
             // 
@@ -214,7 +212,7 @@
             Controls.Add(dtpAvailableFrom);
             Controls.Add(txtPhotoUrls_);
             Controls.Add(label7);
-            Controls.Add(txtPhotoUrls);
+            Controls.Add(lblphotourl);
             Controls.Add(label5);
             Controls.Add(txtLocation);
             Controls.Add(nudPrice);
@@ -249,7 +247,7 @@
         private Label label5;
         private Label label6;
         private Label label7;
-        private Label txtPhotoUrls;
+        private Label lblphotourl;
         private TextBox txtPhotoUrls_;
         private DateTimePicker dtpAvailableFrom;
         private DateTimePicker dtpAvailableTo;

@@ -26,7 +26,7 @@ namespace TinyHouse.UI
                 {
                     r.Id,
                     Kiraci = r.UserId,
-                    EvId = r.TinyHouseId,
+                    EvId = r.HouseId,
                     Baslangic = r.StartDate,
                     Bitis = r.EndDate,
                     ToplamFiyat = r.TotalPrice,

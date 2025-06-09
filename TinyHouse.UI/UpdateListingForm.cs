@@ -15,29 +15,34 @@ namespace TinyHouse.UI
         public UpdateListingForm(int houseId)
         {
             InitializeComponent();
+
             _houseService = new HouseService();
             _houseId = houseId;
 
-            Load += UpdateListingForm_Load;
-            btnUpdate.Click += btnUpdate_Click;
-            btnCancel.Click += btnCancel_Click;
+            // Event handler’ları bağla
+            this.Load += UpdateListingForm_Load;
+            btnUpdate.Click += BtnUpdate_Click;
+            btnCancel.Click += BtnCancel_Click;
         }
 
         private void UpdateListingForm_Load(object sender, EventArgs e)
         {
             try
             {
-                HouseModel house = _houseService.GetHouseById(_houseId);
+                var house = _houseService.GetHouseById(_houseId);
                 if (house == null)
                 {
-                    MessageBox.Show("İlan bulunamadı.");
-                    Close();
+                    MessageBox.Show("İlan bulunamadı.", "Hata",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    this.DialogResult = DialogResult.Cancel;
+                    this.Close();
                     return;
                 }
 
+                // Formu mevcut veriyle doldur
                 txtTitle.Text = house.Title;
                 txtDescription.Text = house.Description;
-                txtPhotoUrls.Text = house.PhotoUrls;
+                txtPhotoUrls_.Text = house.PhotoUrls;
                 nudPrice.Value = house.PricePerNight;
                 txtLocation.Text = house.Location;
                 chbIsActive.Checked = house.IsActive;
@@ -46,49 +51,53 @@ namespace TinyHouse.UI
             }
             catch
             {
-                MessageBox.Show("İlan yüklenirken hata oluştu.");
-                Close();
+                MessageBox.Show("İlan yüklenirken hata oluştu.", "Hata",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.DialogResult = DialogResult.Cancel;
+                this.Close();
             }
         }
 
-        private void btnUpdate_Click(object sender, EventArgs e)
+        private void BtnUpdate_Click(object sender, EventArgs e)
         {
             try
             {
+                // 1) Validasyon
                 string title = txtTitle.Text.Trim();
-                string desc = txtDescription.Text.Trim();
-                string photos = txtPhotoUrls.Text.Trim();
                 string location = txtLocation.Text.Trim();
                 decimal price = nudPrice.Value;
                 DateTime from = dtpAvailableFrom.Value.Date;
                 DateTime to = dtpAvailableTo.Value.Date;
-                bool isActive = chbIsActive.Checked;
 
                 if (string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(location))
                 {
-                    MessageBox.Show("Başlık ve konum boş olamaz.");
+                    MessageBox.Show("Başlık ve konum boş olamaz.", "Uyarı",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
                 if (price <= 0)
                 {
-                    MessageBox.Show("Fiyat 0'dan büyük olmalı.");
+                    MessageBox.Show("Fiyat 0'dan büyük olmalı.", "Uyarı",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
                 if (to < from)
                 {
-                    MessageBox.Show("Bitiş tarihi başlangıçtan önce olamaz.");
+                    MessageBox.Show("Bitiş tarihi başlangıçtan önce olamaz.", "Uyarı",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
+                // 2) Modeli oluşturup güncelle
                 var house = new HouseModel
                 {
                     Id = _houseId,
                     Title = title,
-                    Description = desc,
-                    PhotoUrls = photos,
+                    Description = txtDescription.Text.Trim(),
+                    PhotoUrls = txtPhotoUrls_.Text.Trim(),
                     AvailableFrom = from,
                     AvailableTo = to,
-                    IsActive = isActive,
+                    IsActive = chbIsActive.Checked,
                     PricePerNight = price,
                     Location = location,
                     OwnerId = SessionContext.CurrentUserId
@@ -96,25 +105,31 @@ namespace TinyHouse.UI
 
                 bool ok = _houseService.UpdateHouse(house);
 
+                // 3) Sonuç
                 if (ok)
                 {
-                    MessageBox.Show("İlan başarıyla güncellendi.");
-                    Close();
+                    MessageBox.Show("İlan başarıyla güncellendi.", "Bilgi",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
                 }
                 else
                 {
-                    MessageBox.Show("Güncelleme sırasında bir hata oluştu.");
+                    MessageBox.Show("Güncelleme sırasında bir hata oluştu.", "Hata",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Beklenmeyen hata: {ex.Message}");
+                MessageBox.Show($"Beklenmeyen hata: {ex.Message}", "Hata",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
-            Close();
+            this.DialogResult = DialogResult.Cancel;
+            this.Close();
         }
     }
 }

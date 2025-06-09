@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Text.Json;
 using System.Windows.Forms;
@@ -13,9 +14,11 @@ namespace TinyHouse.UI
     {
         private readonly ReservationService _resService;
         private readonly HouseService _houseService;
-        private readonly ReviewService _reviewService;
+        private readonly TinyHouse.Business.Services.ReviewService _reviewService;
 
-        private HouseModel _selectedHouse = null;
+        // Kiracının rezervasyon listesini tutan binding list
+        private BindingList<ReservationModel> _bindingReservations;
+        private ReservationModel _selectedReservation;
 
         public KiraciForm(int userId)
         {
@@ -23,21 +26,37 @@ namespace TinyHouse.UI
 
             _resService = new ReservationService();
             _houseService = new HouseService();
-            _reviewService = new ReviewService();
+            _reviewService = new TinyHouse.Business.Services.ReviewService();
 
             SessionContext.CurrentUserId = userId;
 
+            // Form yüklendiğinde hem evleri hem rezervasyonları yükle
             Load += KiraciForm_Load;
+
+            // Evleri filtreleme
             btnFilter.Click += (_, __) => ReloadHouses();
-            btnSelectHouse.Click += btnSelectHouse_Click; // İlan Seç tuşu
+            btnSelectHouse.Click += btnSelectHouse_Click;
             btnInspect.Click += btnInspect_Click;
+
+            // Rezervasyonlar sekmesi için seçim değişimini dinle
+            dgvMyReservations.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvMyReservations.AutoGenerateColumns = true;
+            dgvMyReservations.SelectionChanged += DgvMyReservations_SelectionChanged;
+
+            // Yorum gönderme butonu
+            btnSubmitComment.Click += BtnSubmitComment_Click;
+
+            // Başlangıçta yorum panelini pasif yap
+            EnableCommentPanel(false);
+
+            // Çıkış
             btnLogout.Click += (_, __) => Close();
-            // Diğer eventleri ihtiyaca göre ekle (yorum, rezervasyon vs.)
         }
 
         private void KiraciForm_Load(object sender, EventArgs e)
         {
             ReloadHouses();
+            ReloadReservations();
         }
 
         private void ReloadHouses()
@@ -47,14 +66,71 @@ namespace TinyHouse.UI
             dgvHouses.DataSource = _houseService.GetAvailableHouses(from, to);
             HideColumns(dgvHouses, "PhotoUrls", "AvailableFrom", "AvailableTo", "IsActive");
             flpPhotos.Controls.Clear();
-            _selectedHouse = null; // Yeni filtrede eski seçimi temizle
+            _selectedReservation = null;
+        }
+
+        private void ReloadReservations()
+        {
+            var userId = SessionContext.CurrentUserId;
+            var list = _resService.GetReservationsByUser(userId);
+            _bindingReservations = new BindingList<ReservationModel>(list);
+            dgvMyReservations.DataSource = _bindingReservations;
+
+            // İstemediğin sütunları gizle
+            HideColumns(dgvMyReservations, "UserId", "TinyHouseId", "Status", "PaymentStatus");
+        }
+
+        private void DgvMyReservations_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dgvMyReservations.CurrentRow?.DataBoundItem is ReservationModel res)
+            {
+                _selectedReservation = res;
+                EnableCommentPanel(true);
+            }
+            else
+            {
+                _selectedReservation = null;
+                EnableCommentPanel(false);
+            }
+        }
+
+        private void EnableCommentPanel(bool enable)
+        {
+            nudRating.Enabled = enable;
+            txtComment.Enabled = enable;
+            btnSubmitComment.Enabled = enable;
+        }
+
+        private void BtnSubmitComment_Click(object sender, EventArgs e)
+        {
+            if (_selectedReservation == null)
+            {
+                MessageBox.Show("Lütfen önce bir rezervasyon seçin.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var review = new ReviewModel
+            {
+                HouseId = _selectedReservation.HouseId,
+                UserId = SessionContext.CurrentUserId,
+                Rating = (int)nudRating.Value,
+                Text = txtComment.Text.Trim(),
+                Status = CommentStatus.Pending
+            };
+
+            _reviewService.AddReview(review);
+            MessageBox.Show("Yorumunuz admin onayına gönderildi.", "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            // Paneli sıfırla
+            txtComment.Clear();
+            nudRating.Value = nudRating.Minimum;
+            EnableCommentPanel(false);
         }
 
         private void btnSelectHouse_Click(object sender, EventArgs e)
         {
             if (dgvHouses.CurrentRow?.DataBoundItem is HouseModel house)
             {
-                _selectedHouse = house;
                 ShowInfo($"Seçili ilan: {house.Title}");
                 DisplaySelectedHousePhotos(house);
             }
@@ -64,21 +140,26 @@ namespace TinyHouse.UI
             }
         }
 
+        private void btnInspect_Click(object sender, EventArgs e)
+        {
+            if (_selectedReservation == null)
+            {
+                ShowWarning("Lütfen önce rezervasyon seçin.");
+                return;
+            }
+            using var reviewForm = new ReviewForm(_selectedReservation.Id);
+            reviewForm.ShowDialog();
+        }
+
+        // Foto galerisini göster
         private void DisplaySelectedHousePhotos(HouseModel h)
         {
             flpPhotos.Controls.Clear();
             if (!string.IsNullOrWhiteSpace(h.PhotoUrls))
             {
                 List<string> imgs = new();
-                try
-                {
-                    imgs = JsonSerializer.Deserialize<List<string>>(h.PhotoUrls) ?? new List<string>();
-                }
-                catch (JsonException)
-                {
-                    // Eğer tek bir URL ise, onu da ekle
-                    imgs.Add(h.PhotoUrls);
-                }
+                try { imgs = JsonSerializer.Deserialize<List<string>>(h.PhotoUrls) ?? new(); }
+                catch (JsonException) { imgs.Add(h.PhotoUrls); }
                 foreach (var url in imgs)
                 {
                     flpPhotos.Controls.Add(new PictureBox
@@ -96,17 +177,6 @@ namespace TinyHouse.UI
             else flpPhotos.Visible = false;
         }
 
-        private void btnInspect_Click(object sender, EventArgs e)
-        {
-            if (_selectedHouse == null)
-            {
-                ShowWarning("Lütfen önce 'İlan Seç' butonuna tıklayarak bir ilan seçin.");
-                return;
-            }
-            using var reviewForm = new ReviewForm(_selectedHouse.Id);
-            reviewForm.ShowDialog();
-        }
-
         private void HideColumns(DataGridView grid, params string[] cols)
         {
             foreach (var col in cols)
@@ -119,14 +189,6 @@ namespace TinyHouse.UI
 
         private void ShowWarning(string msg)
             => MessageBox.Show(msg, "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-        private void panel2_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
- 
-
-        // Diğer fonksiyonlar (yorum ekleme, rezervasyon...) da benzer şekilde seçili _selectedHouse ile ilerlemeli.
     }
 }
+

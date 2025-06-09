@@ -87,7 +87,6 @@
             btnAddListing.TabIndex = 4;
             btnAddListing.Text = "İlan ekle";
             btnAddListing.UseVisualStyleBackColor = false;
-            btnAddListing.Click += btnAddListing_Click;
             // 
             // btnBack
             // 
@@ -98,7 +97,6 @@
             btnBack.TabIndex = 5;
             btnBack.Text = "Geri";
             btnBack.UseVisualStyleBackColor = false;
-            btnBack.Click += btnBack_Click_1;
             // 
             // label1
             // 
